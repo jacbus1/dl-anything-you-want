@@ -1,0 +1,14 @@
+{
+  "scope": "separately prepared source package; not repository CI",
+  "node": "v22.16.0",
+  "tests": 74,
+  "passed": 74,
+  "failed": 0,
+  "skipped": 0,
+  "syntax_check": "passed",
+  "live_instagram": "not tested",
+  "live_threads": "not tested",
+  "docker": "not tested",
+  "real_devices": "not tested",
+  "source_import": "blocked; pending"
+}
