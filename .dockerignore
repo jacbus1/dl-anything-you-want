@@ -1,0 +1,9 @@
+**
+!package.json
+!server.mjs
+!lib
+!lib/**
+!web
+!web/**
+!LICENSE
+!THIRD_PARTY_NOTICES.md

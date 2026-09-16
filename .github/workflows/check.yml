@@ -1,0 +1,37 @@
+name: Checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm run check
+      - run: npm test
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+      - run: docker compose up --build --detach
+      - name: Check container health and static frontend
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/api/health > health.json; then break; fi
+            sleep 1
+          done
+          node -e "const h=require('./health.json'); if(h.status!=='ok'||h.instagram!=='not-configured'||h.threads!=='experimental-not-live-verified') process.exit(1)"
+          curl --fail --silent http://127.0.0.1:3000/ | grep -q FramePocket
+      - if: always()
+        run: docker compose logs && docker compose down

@@ -2,33 +2,32 @@
 
 **English** | [繁體中文](../zh-TW/verification.md) | [README](../../README.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch.
+## Source-import evidence — 2026-09-16 UTC
 
-Release preparation: 2026-09-15 America/Toronto (runtime timestamps may be 2026-09-16 UTC).
+Imported from `framepocket-0.1.0-bilingual-source.zip`. Its SHA-256, the documentation-only base commit, runtime and fresh local results are recorded in [local-tests.json](../local-tests.json). The archive's 74 inherited tests passed before fixes; 76 tests pass after adding concurrency and conflicting-canonical regression tests. Run `npm test` and `npm run check` from the repository root.
 
-## Recorded scope
+The source includes the Node API, static Traditional Chinese UI, configuration example, Docker/Compose files, CI and a manual Pages workflow. Import is not a deployment. GitHub CI results must be read on the PR; local passes are not remote CI evidence.
 
-The inherited 69 Node unit/local-HTTP tests were rerun successfully before editing. The separately prepared source package adds five repository/documentation checks; final local results are recorded in [local-tests.json](../local-tests.json). After obtaining the source package, run `npm test` and `npm run check` to reproduce. No executable tests or CI workflows are included in this documentation-only PR. A local pass is not a remote CI result.
-
-Parser tests use invented post IDs and synthetic Cobalt/HTML responses. Local HTTP tests start a real loopback server but inject mock media/resolvers; test bytes labeled `video/mp4` are not a playable-video test. Source-package repository checks cover package/notice consistency, documentation pairs/relative links and static-only manual Pages scope.
-
-Earlier offline browser layout checks are part of the original prototype history, not newly rerun evidence for this change. Screenshots/browser reports from that historical package are not bundled here and no new browser/device pass is claimed.
-
-| Work | Status |
+| Check | This import's result |
 | --- | --- |
-| Prepared source: Node unit/local HTTP + repository checks | See local result file |
-| Prepared source: JavaScript syntax | See local result file |
-| This documentation PR's relative Markdown links | 86 checked locally |
+| Node unit/local HTTP and repository tests | 76 passed, 0 failed/skipped; Node v24.19.0 |
+| JavaScript syntax | Passed |
+| Default `npm start`, health, static assets, missing-engine error | Passed on loopback; no external media requests |
+| Node 22/24 CI | Workflow added; inspect the PR for actual results |
+| Docker build/runtime | Local attempt unavailable: Docker executable absent; Compose smoke job added to CI |
+| Browser smoke | Could not run: Chromium absent; installation timed out / returned HTTP 502 |
 | Live Instagram / deployed Cobalt | Not tested |
 | Live Threads extraction/download | Not tested |
-| Browser regression after the new GitHub nav link | Not tested |
-| Docker build/runtime | Not tested |
 | Real iPhone/Android saving | Not tested |
-| Pages/public API operation | Not verified by this documentation change |
+| Pages/public API deployment | Not performed |
 | Independent security/legal audit | Not performed |
 
-## Before calling the service live
+Parser tests use invented post IDs and synthetic Cobalt/HTML responses. Local HTTP tests start a loopback server with mock resolvers/media; bytes labelled `video/mp4` are not a playable-video test. New regressions verify that delayed request bodies cannot exceed two active resolvers and that conflicting canonical/OG post identities fail closed. Repository checks cover attribution, bilingual documents, relative links and manual static-only Pages scope.
 
-Test owned/permitted Instagram photo, Reel and mixed carousel; permitted Threads single/multiple-video and no-video posts; blocked/login-required/deleted/429 responses; MIME/actual content/size/duration; completed browser saves; expired tickets, limits, CORS and TLS. Record host region, time, commit, Cobalt version and real device/browser. Never commit private URLs, cookies, keys or downloaded content as test evidence.
+Historical browser layout checks are not evidence for this import. No fresh browser, mobile layout, playable-media or real-device pass is claimed. The Docker CI smoke job checks container startup, health and frontend serving only; it does not run Cobalt or establish platform compatibility.
 
-Public repository availability, merged source, successful CI and a deployed static frontend are distinct milestones. None independently proves successful media downloads.
+## Before claiming live compatibility
+
+Test owned/permitted Instagram photo, Reel and mixed carousel; permitted Threads single/multiple-video and no-video posts; blocked/login-required/deleted/429 responses; MIME/actual content/size/duration; completed browser saves; expired tickets, limits, CORS and TLS. Record host region, UTC time, tested commit, exact Cobalt version and real device/browser. Never commit private URLs, cookies, keys or downloaded content as evidence.
+
+Public source, merged PR, successful CI, deployed frontend and successful real downloads are separate milestones. Keep untested combinations labelled unverified.
