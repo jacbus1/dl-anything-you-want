@@ -43,6 +43,14 @@ test('Threads matches exact post, never recommendations',()=>{
 test('Threads chooses largest available video candidate',()=>{
  const x=parseThreadsHTML(script({code:'ABC123',video_versions:[{url:'https://x.fbcdn.net/low.mp4',width:640,height:360},{url:cdn,width:1920,height:1080}]}),'ABC123');assert.equal(x[0].url,cdn);
 });
+test('Threads returns the largest post image and a video cover without accepting unrelated images',()=>{
+ const photo=parseThreadsHTML(script({code:'PHOTO1',media_type:1,image_versions2:{candidates:[
+   {url:'https://x.fbcdn.net/low.jpg',width:320,height:200},{url:'https://x.fbcdn.net/full.jpg',width:1920,height:1080}
+ ]}}),'PHOTO1');
+ assert.deepEqual(photo.map(x=>[x.type,x.url,x.filename]),[['photo','https://x.fbcdn.net/full.jpg','framepocket-01.jpg']]);
+ const video=parseThreadsHTML(script({code:'VIDEO1',media_type:2,video_versions:[{url:cdn}],image_versions2:{candidates:[{url:'https://x.fbcdn.net/cover.jpg',width:640,height:384}]}}),'VIDEO1');
+ assert.deepEqual(video.map(x=>x.type),['video','photo']);
+});
 test('Threads carousel videos deduplicate',()=>{
  const x=parseThreadsHTML(script({code:'ABC123',carousel_media:[{video_versions:[{url:cdn}]},{video_versions:[{url:cdn}]},{video_versions:[{url:'https://x.fbcdn.net/b.mp4'}]}]}),'ABC123');assert.equal(x.length,2);
 });

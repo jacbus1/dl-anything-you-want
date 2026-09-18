@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f5f6f2"><meta name="referrer" content="no-referrer">
-  <meta name="description" content="FramePocket — 儲存你有權下載的 Instagram 相片、影片與 Threads 公開影片。可自架的研究原型。">
+  <meta name="description" content="FramePocket — 儲存你有權下載的 Instagram 與 Threads 公開相片、影片。可自架的研究原型。">
   <title>FramePocket — 留住值得保存的片段</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css"><script src="./config.js" defer></script><script src="./app.js" defer></script>
@@ -18,7 +18,7 @@
     <div class="eyebrow"><span></span> YOUR LINKS. YOUR COLLECTION.</div>
     <h1>值得保存的片段，<br><em>放進你的口袋。</em></h1>
     <p class="intro">貼上 Instagram 或 Threads 網址，選擇檔案並儲存。<br>不索取社交帳號密碼；只處理你有權下載的公開內容。</p>
-    <div class="platforms"><span><b>◎</b> Instagram 相片 · Reels</span><span><b>@</b> Threads 影片 <small>EXPERIMENTAL</small></span></div>
+    <div class="platforms"><span><b>◎</b> Instagram 相片 · Reels</span><span><b>@</b> Threads 影片 · 圖片 <small>EXPERIMENTAL</small></span></div>
   </section>
   <section class="workbench" aria-labelledby="download-title">
     <div class="bench-header"><div><p class="micro">01 / START WITH A LINK</p><h2 id="download-title">把貼文網址放在這裡</h2></div><span id="connection" class="connection">檢查連線中</span></div>
@@ -38,7 +38,7 @@
   </section>
   <section class="scope" id="scope"><div><p class="micro">CLEAR BOUNDARIES</p><h2>能做甚麼，<br>也說清楚不能做甚麼。</h2></div><div class="scope-list">
     <div><strong>Instagram</strong><p>相片、Reels、影片及混合輪播。需要接上你自架的 Cobalt；不保證所有公開貼文均可解析。</p><span class="pill">需要下載引擎</span></div>
-    <div><strong>Threads</strong><p>匿名公開頁面的單則貼文影片；只讀取與網址相符的貼文資料。頁面改版或需要登入時會失敗。</p><span class="pill amber">實驗性</span></div>
+    <div><strong>Threads</strong><p>匿名公開頁面的單則貼文影片、圖片與影片封面；只讀取與網址相符的貼文資料。頁面改版或需要登入時會失敗。</p><span class="pill amber">實驗性</span></div>
     <div><strong>暫不提供</strong><p>私人帳號、Stories、整個帳號抓取、cookies 上傳、登入繞過、DRM／付費內容或批量 ZIP。</p><span class="pill neutral">有意保留的邊界</span></div>
   </div></section>
   <section class="notice"><strong>研究原型，不是已驗證的正式下載服務。</strong><p>介面與下載引擎是分開的。GitHub Pages 只能提供此靜態介面；需要另外部署 API。真實 Instagram／Threads 下載和實機儲存，必須在你的部署環境以獲授權內容驗證。</p></section>

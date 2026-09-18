@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-A self-hostable research prototype for saving permitted public Instagram photos/videos and experimenting with Threads post videos. The web interface currently uses Traditional Chinese; this English README is a separate documentation edition.
+A self-hostable research prototype for saving permitted public Instagram photos/videos and experimenting with Threads post videos and images. The web interface currently uses Traditional Chinese; this English README is a separate documentation edition.
 
 > **Prototype, not a verified live download service.** Instagram requires your own Cobalt API. Threads extraction is experimental. Public source code and a published frontend do not mean a working backend has been deployed.
 
@@ -12,7 +12,7 @@ A self-hostable research prototype for saving permitted public Instagram photos/
 | --- | --- | --- |
 | Responsive web interface | Link input, rights confirmation, file selection, explicit demo mode | Responsive CSS; browser rerun unavailable, real-device saves untested |
 | Instagram adapter | Photos, videos, Reels and mixed carousel responses from self-hosted Cobalt | Synthetic response tests; live Cobalt/Instagram not verified |
-| Threads adapter | Anonymous HTML/JSON/OG parsing tied to the requested post ID | Synthetic HTML tests only; live extraction not verified |
+| Threads adapter | Anonymous HTML/JSON/OG parsing tied to the requested post ID; video and post media images | One public post was downloaded locally; platform changes can still break extraction |
 | File streaming | 60-second single-use tickets, MIME/byte limits, no application media archive | Mock upstream bytes; not a playable-video test |
 | Deployment | Node server, Docker files, CI and manual Pages workflow | Docker, Pages and public API deployment still require verification |
 
@@ -44,7 +44,7 @@ COBALT_API_KEY=
 
 The hostname is a placeholder, not a provided service. Use the instance root, not `/api/resolve`. A key is optional only when your instance permits it; secrets belong on the server, never in `web/config.js`. The supplied Compose file starts FramePocket only, not Cobalt.
 
-Threads uses no configured login/session. This does not guarantee anonymous availability: blocked, login-required, rate-limited, changed or video-free pages may fail.
+Threads uses no configured login/session. This does not guarantee anonymous availability: blocked, login-required, rate-limited, changed or media-free pages may fail.
 
 ## Architecture
 
