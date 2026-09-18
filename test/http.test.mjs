@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2026 jacbus1 and FramePocket contributors
+// Copyright (c) 2026 jacbus1 and DL Anything You Want contributors
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { once } from 'node:events';
@@ -13,10 +13,12 @@ async function boot(t,options={}) {
  const base=`http://127.0.0.1:${app.address().port}`;
  return {base,post:(body,extra={})=>fetch(base+'/api/resolve',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',...extra},body:JSON.stringify(body)})};
 }
-const resolver=async()=>({items:[{url:'https://x.fbcdn.net/example.mp4',type:'video',filename:'framepocket-01.mp4'}],experimental:true,provider:'test-fixture'});
+const resolver=async()=>({items:[{url:'https://x.fbcdn.net/example.mp4',type:'video',filename:'dl-anything-01.mp4'}],experimental:true,provider:'test-fixture'});
 test('HTTP health does not claim live verification',async t=>{const {base}=await boot(t);const d=await(await fetch(base+'/api/health')).json();assert.equal(d.instagram,'not-configured');assert.equal(d.threads,'experimental-not-live-verified');});
 test('HTTP frontend serves; secret paths are not public',async t=>{
- const {base}=await boot(t);const r=await fetch(base+'/');assert.equal(r.status,200);assert.match(await r.text(),/FramePocket/);assert.equal(r.headers.get('x-content-type-options'),'nosniff');
+ const {base}=await boot(t);const r=await fetch(base+'/');assert.equal(r.status,200);assert.match(await r.text(),/DL Anything You Want/);assert.equal(r.headers.get('x-content-type-options'),'nosniff');
+ const english=await fetch(base+'/en/');assert.equal(english.status,200);assert.match(await english.text(),/<html lang="en">/);
+ assert.equal((await fetch(base+'/robots.txt')).status,200);assert.equal((await fetch(base+'/sitemap.xml')).status,200);
  for(const path of ['/.env','/server.mjs','/lib/core.mjs','/docs/repository-snapshots.json','/%2e%2e/.env']) assert.equal((await fetch(base+path)).status,404);
 });
 test('HTTP blocks third-party origin',async t=>{const {post}=await boot(t,{resolver});const r=await post({url:source,consent:true},{Origin:'https://evil.test'});assert.equal(r.status,403);});

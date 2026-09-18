@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2026 jacbus1 and FramePocket contributors
+// Copyright (c) 2026 jacbus1 and DL Anything You Want contributors
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -31,7 +31,9 @@ const assets=new Map([
   ['/',['index.html','text/html; charset=utf-8']], ['/index.html',['index.html','text/html; charset=utf-8']],
   ['/styles.css',['styles.css','text/css; charset=utf-8']], ['/app.js',['app.js','text/javascript; charset=utf-8']],
   ['/config.js',['config.js','text/javascript; charset=utf-8']], ['/manifest.webmanifest',['manifest.webmanifest','application/manifest+json']],
-  ['/icon.svg',['icon.svg','image/svg+xml']]
+  ['/icon.svg',['icon.svg','image/svg+xml']], ['/en/',['en/index.html','text/html; charset=utf-8']],
+  ['/en/index.html',['en/index.html','text/html; charset=utf-8']], ['/robots.txt',['robots.txt','text/plain; charset=utf-8']],
+  ['/sitemap.xml',['sitemap.xml','application/xml; charset=utf-8']], ['/llms.txt',['llms.txt','text/plain; charset=utf-8']]
 ]);
 
 export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia=openURL, tickets=new TicketStore()}={}) {
@@ -56,7 +58,7 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
       if (req.method==='OPTIONS' && route==='/api/resolve') {
         res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers','Content-Type'); res.writeHead(204); res.end(); return;
       }
-      if (req.method==='GET' && route==='/api/health') return json(res,200,{status:'ok',version:'0.1.0',instagram:config.cobaltURL?'configured-not-live-verified':'not-configured',threads:'experimental-not-live-verified'});
+      if (req.method==='GET' && route==='/api/health') return json(res,200,{status:'ok',version:'0.2.0',instagram:config.cobaltURL?'configured-not-live-verified':'not-configured',threads:'experimental-not-live-verified'});
       const ip=req.socket.remoteAddress || 'unknown'; // Never trust a user-supplied X-Forwarded-For.
       if (req.method==='POST' && route==='/api/resolve') {
         if (!origin) throw new AppError('ORIGIN_REQUIRED','必須由已設定的網站送出請求。',403);
@@ -118,5 +120,5 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
 if (process.argv[1] && pathResolve(process.argv[1])===fileURLToPath(import.meta.url)) {
   const config=readConfig(); const server=createApp(config);
   server.requestTimeout=25000; server.headersTimeout=10000;
-  server.listen(config.port,config.host,()=>console.log(`FramePocket: http://${config.host}:${config.port} (prototype; live extraction not verified)`));
+  server.listen(config.port,config.host,()=>console.log(`DL Anything You Want: http://${config.host}:${config.port}`));
 }

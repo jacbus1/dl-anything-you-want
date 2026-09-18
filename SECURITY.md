@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](SECURITY.zh-TW.md)
 
-FramePocket 0.1.x is a research prototype, not an independently audited public service. No stable-version support or response-time SLA is promised.
+DL Anything You Want 0.1.x is a research prototype, not an independently audited public service. No stable-version support or response-time SLA is promised.
 
 ## Reporting
 

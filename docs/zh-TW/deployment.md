@@ -2,7 +2,7 @@
 
 [English](../en/deployment.md) | **繁體中文** | [README](../../README.zh-TW.md)
 
-公開 repo 與建立可用的下載服務是兩件事。原始碼目的地為 `jacbus1/framepocket`，目前沒有預設後端地址。預期 Pages 網址 `https://jacbus1.github.io/framepocket/` **須待 Pages 成功部署才成立**，不是已上線聲明。
+公開 repo 與建立可用的下載服務是兩件事。原始碼目的地為 `jacbus1/dl-anything-you-want`，目前沒有預設後端地址。預期 Pages 網址 `https://jacbus1.github.io/dl-anything-you-want/` **須待 Pages 成功部署才成立**，不是已上線聲明。
 
 ## 本機開發
 
@@ -20,15 +20,13 @@
 
 ## 引擎及 API 主機
 
-依 [官方說明](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)獨立部署 Cobalt，核對並鎖定上游版本及授權。附帶 Compose **只啟動 FramePocket**。Cobalt 返回的 tunnel 網址必須可由 Node API 連接。Docker 的 localhost 指同一容器，不是其他服務或宿主機。
+附帶 Compose 會同時啟動 DL Anything You Want 與固定 digest 的 Cobalt。Cobalt tunnel 網址只在內部 Docker 網路傳送。
 
 ```sh
-cp .env.example .env
-# 先設定自己的主機及秘密資料。
 docker compose up --build
 ```
 
-本輪尚未驗證 Docker build／容器執行。宿主機連接埠只綁定 loopback；公開前應加上經審查的 HTTPS gateway 及對外連線控制。不要向匿名訪客分享私人 Meta session。
+Docker 並非必要。依 [Cobalt 官方無 Docker 步驟](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)以 Node.js、Git、pnpm 啟動 Cobalt，在 `.env` 設定 `COBALT_URL=http://localhost:9000/`，再執行 `npm start`。宿主機連接埠只綁定 loopback；公開前應加上 HTTPS gateway 及防濫用控制。
 
 以下除 repo 擁有者的 Pages origin 外，主機名稱均為佔位符：
 
@@ -40,14 +38,14 @@ COBALT_API_KEY=
 MAX_FILE_MB=100
 ```
 
-`/framepocket/` 的瀏覽器 Origin 是 `https://jacbus1.github.io`，不含專案路徑。同一 origin 下的其他專案網站亦共用這個 CORS 邊界；獨立自訂網域才有獨立 origin。CORS 不是身分驗證。
+`/dl-anything-you-want/` 的瀏覽器 Origin 是 `https://jacbus1.github.io`，不含專案路徑。同一 origin 下的其他專案網站亦共用這個 CORS 邊界；獨立自訂網域才有獨立 origin。CORS 不是身分驗證。
 
 ## 連接前端
 
 修改 `web/config.js`，只放公開 HTTPS API origin：
 
 ```js
-window.FRAMEPOCKET_CONFIG = Object.freeze({
+window.DL_ANYTHING_CONFIG = Object.freeze({
   apiBase: 'https://YOUR-API-HOST'
 });
 ```

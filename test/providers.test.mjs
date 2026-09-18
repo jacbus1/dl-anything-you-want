@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2026 jacbus1 and FramePocket contributors
+// Copyright (c) 2026 jacbus1 and DL Anything You Want contributors
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Readable} from 'node:stream';

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2026 jacbus1 and FramePocket contributors
+// Copyright (c) 2026 jacbus1 and DL Anything You Want contributors
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
@@ -14,15 +14,21 @@ for (const [input,platform,id] of [
  ['https://instagram.com/reel/ABC_def/#test','instagram','ABC_def'],
  ['https://m.instagram.com/reels/ABC123','instagram','ABC123'],
  ['https://instagram.com/tv/ABC123/','instagram','ABC123'],
+ ['https://instagram.com/share/reel/ABC123/','instagram','ABC123'],
  ['https://www.threads.net/@author/post/ABC123?x=y','threads','ABC123'],
  ['https://threads.com/@a.b/post/ABC123/','threads','ABC123'],
- ['https://threads.net/t/ABC123','threads','ABC123']]) {
- test(`normalizes ${input}`,()=>{const s=normalizeSource(input);assert.equal(s.platform,platform);assert.equal(s.id,id);assert(!s.url.includes('?'));assert(!s.url.includes('#'));});
+ ['https://threads.net/t/ABC123','threads','ABC123'],
+ ['https://www.tiktok.com/@creator/video/1234567890123456789','tiktok','1234567890123456789'],
+ ['https://vt.tiktok.com/ZSabc123/','tiktok','ZSabc123'],
+ ['https://www.facebook.com/reel/123456789','facebook','123456789'],
+ ['https://fb.watch/Abc_123/','facebook','Abc_123']]) {
+ test(`normalizes ${input}`,()=>{const s=normalizeSource(input);assert.equal(s.platform,platform);assert.equal(s.id,id);assert(!s.url.includes('#'));});
 }
 for (const input of [null, '', 1,'http://instagram.com/p/ABC123/','https://instagram.com.evil.test/p/ABC123/',
  'https://instagram.com@evil.test/p/ABC123/','https://u:p@instagram.com/p/ABC123/','https://instagram.com:8080/p/ABC123/',
  'https://127.0.0.1/p/ABC123/','https://instagram.com/author/','https://instagram.com/stories/author/123/',
- 'https://instagram.com/share/reel/ABC123/','https://threads.com/@author/','https://evil.test','javascript:alert(1)',
+ 'https://threads.com/@author/','https://evil.test','javascript:alert(1)',
+ 'https://tiktok.com.evil.test/@a/video/123456','https://facebook.com.evil.test/reel/123456',
  'https://instagram.com/p/ABC%2f123/','https://instagram.com\\@evil.test/p/ABC123/']) {
  test(`rejects unsafe/unsupported input ${String(input)}`,()=>assert.throws(()=>normalizeSource(input)));
 }
@@ -33,8 +39,8 @@ test('media domain boundary and tunnel scope',()=>{
  assert(isMediaURL(cdn));assert(isMediaURL('https://x.fbcdn.net/a.mp4'));assert(isMediaURL('http://cobalt:9000/tunnel?id=123',cobalt));
  for(const u of ['https://fbcdn.net.evil.test/a.mp4','https://evil.test/a.mp4','http://x.fbcdn.net/a.mp4','https://u:p@x.fbcdn.net/a.mp4','http://cobalt:9000/admin','http://cobalt:8000/tunnel']) assert(!isMediaURL(u,cobalt));
 });
-test('Cobalt mixed carousel',()=>{const x=parseCobalt({status:'picker',picker:[{type:'photo',url:'https://x.fbcdn.net/a.jpg'},{type:'video',url:cdn}]},cobalt);assert.equal(x.length,2);assert.equal(x[0].type,'photo');assert.equal(x[1].filename,'framepocket-02.mp4');});
-test('Cobalt signed tunnel',()=>assert.equal(parseCobalt({status:'tunnel',url:'http://cobalt:9000/tunnel?id=123',filename:'bad-caption.mp4'},cobalt)[0].filename,'framepocket-01.mp4'));
+test('Cobalt mixed carousel',()=>{const x=parseCobalt({status:'picker',picker:[{type:'photo',url:'https://x.fbcdn.net/a.jpg'},{type:'video',url:cdn}]},cobalt);assert.equal(x.length,2);assert.equal(x[0].type,'photo');assert.equal(x[1].filename,'dl-anything-02.mp4');});
+test('Cobalt signed tunnel',()=>assert.equal(parseCobalt({status:'tunnel',url:'http://cobalt:9000/tunnel?id=123',filename:'bad-caption.mp4'},cobalt)[0].filename,'dl-anything-01.mp4'));
 test('Cobalt redirects support a single image',()=>assert.equal(parseCobalt({status:'redirect',url:'https://x.fbcdn.net/a.jpg',filename:'a.jpg'},cobalt)[0].type,'photo'));
 test('Cobalt unknown/error/unsafe response fails closed',()=>{for(const d of [{status:'error'},{status:'local-processing'},{status:'picker',picker:[]},{status:'redirect',url:'https://evil.test/a.mp4'},{status:'picker',picker:[{type:'audio',url:cdn}]}]) assert.throws(()=>parseCobalt(d,cobalt));});
 test('Threads matches exact post, never recommendations',()=>{
@@ -47,7 +53,7 @@ test('Threads returns the largest post image and a video cover without accepting
  const photo=parseThreadsHTML(script({code:'PHOTO1',media_type:1,image_versions2:{candidates:[
    {url:'https://x.fbcdn.net/low.jpg',width:320,height:200},{url:'https://x.fbcdn.net/full.jpg',width:1920,height:1080}
  ]}}),'PHOTO1');
- assert.deepEqual(photo.map(x=>[x.type,x.url,x.filename]),[['photo','https://x.fbcdn.net/full.jpg','framepocket-01.jpg']]);
+ assert.deepEqual(photo.map(x=>[x.type,x.url,x.filename]),[['photo','https://x.fbcdn.net/full.jpg','dl-anything-01.jpg']]);
  const video=parseThreadsHTML(script({code:'VIDEO1',media_type:2,video_versions:[{url:cdn}],image_versions2:{candidates:[{url:'https://x.fbcdn.net/cover.jpg',width:640,height:384}]}}),'VIDEO1');
  assert.deepEqual(video.map(x=>x.type),['video','photo']);
 });

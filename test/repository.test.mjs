@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright (c) 2026 jacbus1 and FramePocket contributors
+// Copyright (c) 2026 jacbus1 and DL Anything You Want contributors
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir, stat } from 'node:fs/promises';
@@ -18,12 +18,12 @@ async function markdown(dir = '') {
 test('repository metadata targets the public source repository', async () => {
   const data = JSON.parse(await read('package.json'));
   assert.equal(data.license, 'MIT');
-  assert.equal(data.author, 'jacbus1');
-  assert.equal(data.repository.url, 'git+https://github.com/jacbus1/framepocket.git');
+  assert.equal(data.author, 'JACKY H. (@jacbus1)');
+  assert.equal(data.repository.url, 'git+https://github.com/jacbus1/dl-anything-you-want.git');
   assert.equal(data.private, true);
 });
 test('MIT attribution and image notice inclusion are consistent', async () => {
-  assert.match(await read('LICENSE'), /Copyright \(c\) 2026 jacbus1 and FramePocket contributors/);
+  assert.match(await read('LICENSE'), /Copyright \(c\) 2026 jacbus1 and DL Anything You Want contributors/);
   assert.match(await read('Dockerfile'), /LICENSE THIRD_PARTY_NOTICES\.md/);
   assert.match(await read('.dockerignore'), /!LICENSE/);
 });
@@ -54,4 +54,16 @@ test('Pages is manual, main-only and uploads only static web assets', async () =
   assert.match(source, /path: web/);
   assert.doesNotMatch(source, /\n  push:/);
   assert.match(await read('.gitignore'), /!\.env\.example/);
+});
+test('bilingual and discovery files identify the product and author', async () => {
+  for (const page of ['web/index.html','web/en/index.html']) {
+    const source=await read(page);
+    assert.match(source,/DL Anything You Want/);
+    assert.match(source,/JACKY H\./);
+    assert.match(source,/SoftwareApplication/);
+    assert.match(source,/hreflang=/);
+  }
+  assert.match(await read('web/robots.txt'),/OAI-SearchBot/);
+  assert.match(await read('web/sitemap.xml'),/hreflang="en"/);
+  assert.match(await read('web/llms.txt'),/jacbus1/);
 });

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f6f2"><meta name="referrer" content="no-referrer">
+  <meta name="description" content="Download permitted public videos from Facebook, Instagram, Threads and TikTok.">
+  <meta name="author" content="JACKY H. (@jacbus1)">
+  <meta property="og:type" content="website"><meta property="og:locale" content="en_US">
+  <meta property="og:title" content="DL Anything You Want"><meta property="og:description" content="Facebook, Instagram, Threads and TikTok video downloader.">
+  <meta property="og:url" content="https://jacbus1.github.io/dl-anything-you-want/en/">
+  <link rel="canonical" href="https://jacbus1.github.io/dl-anything-you-want/en/">
+  <link rel="alternate" hreflang="zh-Hant" href="https://jacbus1.github.io/dl-anything-you-want/">
+  <link rel="alternate" hreflang="en" href="https://jacbus1.github.io/dl-anything-you-want/en/">
+  <link rel="alternate" hreflang="x-default" href="https://jacbus1.github.io/dl-anything-you-want/en/">
+  <title>Facebook / Instagram / Threads / TikTok Video Downloader</title>
+  <link rel="icon" href="../icon.svg" type="image/svg+xml"><link rel="manifest" href="../manifest.webmanifest">
+  <link rel="stylesheet" href="../styles.css"><script src="../config.js" defer></script><script src="../app.js" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"DL Anything You Want","applicationCategory":"MultimediaApplication","operatingSystem":"Web","url":"https://jacbus1.github.io/dl-anything-you-want/en/","description":"Download permitted public videos from Facebook, Instagram, Threads and TikTok.","author":{"@type":"Person","name":"JACKY H.","alternateName":"jacbus1","url":"https://github.com/jacbus1"},"codeRepository":"https://github.com/jacbus1/dl-anything-you-want","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header class="nav shell">
+  <a class="brand" href="./" aria-label="DL Anything You Want home"><span class="brand-mark">D</span>DL Anything You Want</a>
+  <nav aria-label="Main navigation"><a href="../" lang="zh-Hant">中文</a><a href="https://github.com/jacbus1" target="_blank" rel="noopener noreferrer">JACKY H. · GitHub</a></nav>
+</header>
+<main class="shell">
+  <section class="hero">
+    <h1>Facebook / Instagram /<br><em>Threads / TikTok</em><br>Video Downloader</h1>
+    <p class="intro">Paste a public video link and download.</p>
+  </section>
+  <section class="workbench" aria-labelledby="download-title">
+    <div class="bench-header"><h2 id="download-title">Video URL</h2><span id="connection" class="connection">Checking service</span></div>
+    <form id="download-form">
+      <label class="sr-only" for="source-url">Facebook, Instagram, Threads or TikTok video URL</label>
+      <div class="input-wrap"><span class="link-icon" aria-hidden="true">↗</span><input id="source-url" name="url" type="url" placeholder="https://www.instagram.com/reel/…" required autocomplete="off" spellcheck="false"><button class="paste" type="button" id="paste">Paste</button></div>
+      <div class="form-bottom"><label class="consent"><input id="consent" type="checkbox" required><span>I own this content or have permission to download it.</span></label><button id="resolve" type="submit" class="primary">Download <span aria-hidden="true">→</span></button></div>
+    </form>
+    <p id="message" role="status" aria-live="polite" class="message">Links expire after about one minute.</p>
+    <section id="results" class="results" hidden aria-labelledby="results-heading"><div class="result-heading"><h3 id="results-heading">Downloads</h3><span id="result-count"></span></div><p id="result-note"></p><div id="file-list"></div></section>
+    <div class="bench-footer"><span>Download only public content you own or may use</span></div>
+  </section>
+</main>
+<footer class="shell"><span class="footer-brand">DL Anything You Want</span><p>By <a href="https://github.com/jacbus1" rel="author">JACKY H. (@jacbus1)</a></p></footer>
+<noscript><p class="shell">Enable JavaScript to use the downloader.</p></noscript>
+</body>
+</html>

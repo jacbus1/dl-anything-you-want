@@ -1,39 +1,36 @@
-# FramePocket
+# DL Anything You Want
 
 [English](README.md) | **繁體中文**
 
-可自架的公開媒體下載研究原型，用於儲存有權下載的 Instagram 相片／影片，並試驗 Threads 貼文影片及圖片解析。網站介面目前使用繁體中文；中英文文件分開維護。
+Facebook、Instagram、Threads、TikTok 公開影片下載器，提供繁體中文及英文介面。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
 
-> **這是原型，不是已驗證的正式下載服務。** Instagram 需要你自架的 Cobalt API；Threads 解析仍屬實驗性。公開原始碼或發佈網站介面，不代表下載後端已上線。
+> **本機原型。** Compose 已包含 Cobalt；Threads 解析仍屬實驗性。GitHub Pages 只發佈介面，不會運行下載 API。
 
 ## 包含甚麼
 
 | 部分 | 已實作 | 驗證邊界 |
 | --- | --- | --- |
-| 響應式網站 | 貼上連結、權利確認、檔案選擇、明確標示的示範模式 | 響應式 CSS；本輪無法重跑瀏覽器，未測實機儲存 |
-| Instagram 轉接器 | 處理自架 Cobalt 的相片、影片、Reels、混合輪播回應 | 合成回應測試；未驗證真實 Cobalt／Instagram |
+| 響應式網站 | 貼上連結、權利確認、檔案選擇、中英文頁面 | 響應式 CSS 及瀏覽器流程 |
+| Facebook／Instagram／TikTok | 由內附的 Cobalt 服務解析公開影片 | 實際相容性取決於平台及上游版本 |
 | Threads 轉接器 | 匿名 HTML／JSON／OG 解析，核對所要求的貼文 ID；支援影片及貼文媒體圖 | 單一公開貼文已完成本機下載實測；平台改版仍可能失效 |
-| 檔案串流 | 60 秒單次連結、格式及大小限制，不建立應用程式媒體庫 | 模擬上游 bytes；不是可播放影片測試 |
-| 部署檔案 | Node 伺服器、Docker、CI 及手動 Pages workflow | Docker、Pages 與公開 API 仍待驗證 |
+| 檔案串流 | 60 秒單次連結、格式及大小限制，不建立應用程式媒體庫 | 已於本機下載指定 Instagram MP4 及 Threads 媒體 |
+| 部署檔案 | Node 伺服器、可選 Docker Compose、CI 及 Pages workflow | Pages 只提供靜態介面 |
 
-不提供整個帳號抓取、私人貼文、Stories、登入、cookies 上傳、CAPTCHA／DRM 繞過、轉檔、續傳或批量 ZIP。示範模式只顯示三個合成項目，儲存按鈕停用。
+不提供整個帳號抓取、私人貼文、Stories、登入、cookies 上傳、CAPTCHA／DRM 繞過或批量 ZIP。
 
 ## 本機開始
 
-需要 Node.js 22 或相容的較新版本，無須安裝第三方 npm 套件。請在此原始碼匯入分支（或本 PR 合併後）的 repo 根目錄執行以下指令。
+最簡單的完整啟動方式：
 
 ```sh
-cp .env.example .env
-npm run check
-npm test
-npm start
+docker compose up --build
 ```
 
 開啟 `http://localhost:3000`。
 
-未設定 `COBALT_URL` 時仍可查看示範介面；Instagram 請求會返回 `ENGINE_NOT_CONFIGURED`，不會偽造下載結果。
+Docker 不是必要條件。無 Docker 時，依 [Cobalt 官方指南](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)以 Node.js、Git、pnpm 啟動 Cobalt，再設定 `.env` 的 `COBALT_URL`，最後執行 `npm start`。
 
-### 設定 Instagram 引擎
+### 手動設定 Cobalt
 
 依照 [Cobalt 官方指南](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)部署你控制的實例，再修改 `.env`：
 
@@ -42,7 +39,7 @@ COBALT_URL=https://YOUR-OWN-COBALT-HOST/
 COBALT_API_KEY=
 ```
 
-以上主機名稱只是佔位符，不是已提供的服務。請使用實例根網址，不是 `/api/resolve`。是否需要 key 取決於你的實例設定；秘密資料只放後端，不能放進 `web/config.js`。附帶的 Compose 只啟動 FramePocket，不包含 Cobalt。
+以上主機名稱只是佔位符。Compose 已包含固定映像版本的 Cobalt；手動啟動時才需設定 `COBALT_URL`。
 
 Threads 不使用已設定的登入／session，但不代表所有貼文均可匿名取得。遇到拒絕存取、登入要求、限流、頁面改版或沒有可下載媒體時，解析可能失敗。
 
@@ -51,7 +48,7 @@ Threads 不使用已設定的登入／session，但不代表所有貼文均可�
 ```text
 靜態網站介面（GitHub Pages 或其他主機）
   -> 你的 Node.js API
-     -> Instagram：你自架的 Cobalt
+     -> Facebook／Instagram／TikTok：自架 Cobalt
      -> Threads：實驗性匿名公開 HTML 解析器
   -> 短時下載票證 -> 有大小限制的媒體串流
 ```
@@ -66,13 +63,14 @@ Threads 不使用已設定的登入／session，但不代表所有貼文均可�
 | 授權及外部服務 | [授權](docs/zh-TW/licensing.md) | [Licensing](docs/en/licensing.md) |
 | 研究與證據限制 | [研究](docs/zh-TW/research.md) | [Research](docs/en/research.md) |
 | 測試範圍及上線清單 | [驗證](docs/zh-TW/verification.md) | [Verification](docs/en/verification.md) |
+| 搜尋與 AI 可見度 | [GEO](docs/GEO.md) | [GEO](docs/GEO.md) |
 | 安全及回報 | [安全](SECURITY.zh-TW.md) | [Security](SECURITY.md) |
 | 參與開發 | [參與](CONTRIBUTING.zh-TW.md) | [Contributing](CONTRIBUTING.md) |
 | 更新記錄 | [更新記錄](CHANGELOG.zh-TW.md) | [Changelog](CHANGELOG.md) |
 
 ## 授權與署名
 
-FramePocket 原創程式與文件採用 [MIT License](LICENSE)，署名為 **2026 jacbus1 and FramePocket contributors**。再分發主要部分時須保留版權及許可聲明。
+DL Anything You Want 原創程式與文件採用 [MIT License](LICENSE)，署名為 **2026 jacbus1 and DL Anything You Want contributors**。再分發主要部分時須保留版權及許可聲明。
 
 外部服務及工具保留其原有授權。此 repo 沒有內嵌 Cobalt：其 API 為 AGPL-3.0；官方網站前端為 CC-BY-NC-SA-4.0。本專案不分發該前端、字型或品牌資產。詳見 [第三方授權](THIRD_PARTY_NOTICES.zh-TW.md)及 [授權說明](docs/zh-TW/licensing.md)；以 HTTP 分開服務不等於全面法律豁免。
 

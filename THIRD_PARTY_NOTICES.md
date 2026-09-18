@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](THIRD_PARTY_NOTICES.zh-TW.md)
 
-The [MIT License](LICENSE) applies to original FramePocket materials, not every service, runtime, tool or media file used alongside them. No upstream downloader source, third-party frontend, font file, platform media or credential is bundled in this repository.
+The [MIT License](LICENSE) applies to original DL Anything You Want materials, not every service, runtime, tool or media file used alongside them. No upstream downloader source, third-party frontend, font file, platform media or credential is bundled in this repository.
 
 | Component | Relationship | License / primary source |
 | --- | --- | --- |
@@ -14,6 +14,6 @@ The [MIT License](LICENSE) applies to original FramePocket materials, not every 
 
 Runtime npm dependencies: **none**. Projects mentioned in the research notes are references, not installed dependencies.
 
-Review the exact upstream revision/image used in production. Preserve applicable copyright, license and corresponding-source obligations when modifying or distributing third-party components. Merely hosting Cobalt separately does not establish compliance for every possible integration. No permission to use third-party trademarks or downloaded media is granted by FramePocket's license.
+Review the exact upstream revision/image used in production. Preserve applicable copyright, license and corresponding-source obligations when modifying or distributing third-party components. Merely hosting Cobalt separately does not establish compliance for every possible integration. No permission to use third-party trademarks or downloaded media is granted by DL Anything You Want's license.
 
 Upstream Cobalt license descriptions were checked on 2026-09-15 (America/Toronto); these links follow upstream branches and may change. See [licensing](docs/en/licensing.md) before deployment.

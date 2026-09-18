@@ -1,9 +1,9 @@
 {
-  "name": "framepocket",
-  "version": "0.1.0",
+  "name": "dl-anything-you-want",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "A public-media download interface with a self-hosted Cobalt adapter and an experimental anonymous Threads parser.",
+  "description": "A Facebook, Instagram, Threads and TikTok public video downloader.",
   "engines": {
     "node": ">=22"
   },
@@ -13,18 +13,20 @@
     "check": "node --check server.mjs && node --check lib/core.mjs && node --check lib/network.mjs && node --check lib/providers.mjs && node --check web/app.js && node --check web/config.js"
   },
   "license": "MIT",
-  "author": "jacbus1",
+  "author": "JACKY H. (@jacbus1)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jacbus1/framepocket.git"
+    "url": "git+https://github.com/jacbus1/dl-anything-you-want.git"
   },
   "bugs": {
-    "url": "https://github.com/jacbus1/framepocket/issues"
+    "url": "https://github.com/jacbus1/dl-anything-you-want/issues"
   },
-  "homepage": "https://github.com/jacbus1/framepocket#readme",
+  "homepage": "https://github.com/jacbus1/dl-anything-you-want#readme",
   "keywords": [
     "instagram",
+    "facebook",
     "threads",
+    "tiktok",
     "media-downloader",
     "self-hosted",
     "prototype"

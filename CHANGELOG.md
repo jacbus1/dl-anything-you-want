@@ -12,7 +12,7 @@
 ## Documentation preparation — 2026-09-15 (America/Toronto)
 
 - Replace the initial placeholder with separate English and Traditional Chinese READMEs.
-- Add the MIT License with jacbus1 and FramePocket contributors attribution.
+- Add the MIT License with jacbus1 and DL Anything You Want contributors attribution.
 - Add separate bilingual third-party notices, licensing, deployment, research, verification, security and contribution guides.
 - Explicitly identify the repository as documentation-only until the runnable source is imported.
 

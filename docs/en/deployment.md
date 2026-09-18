@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](../zh-TW/deployment.md) | [README](../../README.md)
 
-Publishing this repository is separate from deploying a working download service. The source destination is `jacbus1/framepocket`; no backend address is preconfigured. The expected project Pages URL is `https://jacbus1.github.io/framepocket/` **only after a successful Pages deployment**, not an assertion that it is live.
+Publishing this repository is separate from deploying a working download service. The source destination is `jacbus1/dl-anything-you-want`; no backend address is preconfigured. The expected project Pages URL is `https://jacbus1.github.io/dl-anything-you-want/` **only after a successful Pages deployment**, not an assertion that it is live.
 
 ## Local development
 
@@ -20,15 +20,13 @@ Use Node.js 22 or compatible newer. Copy `.env.example` to `.env`, run `npm run 
 
 ## Extraction and API hosting
 
-Deploy Cobalt separately using [its official instructions](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md). Review/pin the exact upstream version and its license. The included Compose starts **only FramePocket**. Cobalt must return tunnel URLs reachable from the Node API. In Docker, localhost refers to the same container, not another service or the host.
+The included Compose starts DL Anything You Want and a digest-pinned Cobalt service. Tunnel URLs stay inside the Docker network.
 
 ```sh
-cp .env.example .env
-# Configure your own endpoints and secrets first.
 docker compose up --build
 ```
 
-Docker build/runtime have not been verified in this release preparation. The host port is loopback-only. Use a reviewed HTTPS gateway and egress controls before public exposure. Do not share a personal Meta session with anonymous site visitors.
+Docker is optional. Follow the [official non-Docker Cobalt steps](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) with Node.js, Git and pnpm, set `COBALT_URL=http://localhost:9000/` in `.env`, then run `npm start`. The host port is loopback-only. Use an HTTPS gateway and abuse controls before public exposure.
 
 Example values below are placeholders except for the repository owner's Pages origin:
 
@@ -40,14 +38,14 @@ COBALT_API_KEY=
 MAX_FILE_MB=100
 ```
 
-The browser Origin of `/framepocket/` is `https://jacbus1.github.io`, not a URL with the project path. All project sites under that same origin share that CORS boundary; a dedicated custom domain offers a distinct origin. CORS is not authentication.
+The browser Origin of `/dl-anything-you-want/` is `https://jacbus1.github.io`, not a URL with the project path. All project sites under that same origin share that CORS boundary; a dedicated custom domain offers a distinct origin. CORS is not authentication.
 
 ## Connect the frontend
 
 Edit `web/config.js` to contain only the public HTTPS API origin:
 
 ```js
-window.FRAMEPOCKET_CONFIG = Object.freeze({
+window.DL_ANYTHING_CONFIG = Object.freeze({
   apiBase: 'https://YOUR-API-HOST'
 });
 ```

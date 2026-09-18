@@ -1,0 +1,15 @@
+# DL Anything You Want
+
+Free, self-hostable downloader for permitted public Facebook, Instagram, Threads and TikTok videos.
+
+## Languages
+
+- Traditional Chinese: https://jacbus1.github.io/dl-anything-you-want/
+- English: https://jacbus1.github.io/dl-anything-you-want/en/
+
+## Source and author
+
+- Source: https://github.com/jacbus1/dl-anything-you-want
+- Author: JACKY H. (@jacbus1): https://github.com/jacbus1
+
+The public GitHub Pages site is the frontend. Media extraction requires the separately running backend. Download only content you own or have permission to use.

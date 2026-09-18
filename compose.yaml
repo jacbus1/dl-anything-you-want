@@ -1,9 +1,30 @@
-# API only. Run your own Cobalt separately following its official deployment documentation.
+name: dl-anything-you-want
+
 # Bind to loopback; place a TLS reverse proxy / edge abuse protection in front before public use.
 services:
-  framepocket:
+  cobalt:
+    image: ghcr.io/imputnet/cobalt@sha256:63186dd68afd57ce3bb1f62cc4c139f5fa95b9c3e87a3cf5c6e4c7a570523f62
+    init: true
+    restart: unless-stopped
+    read_only: true
+    environment:
+      API_URL: http://cobalt:9000/
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 200
+    mem_limit: 512m
+    healthcheck:
+      test: [CMD, wget, --spider, --quiet, http://127.0.0.1:9000/]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  app:
     build: .
     restart: unless-stopped
+    depends_on:
+      cobalt:
+        condition: service_healthy
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -11,7 +32,7 @@ services:
       PORT: 3000
       PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:3000}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
-      COBALT_URL: ${COBALT_URL:-}
+      COBALT_URL: http://cobalt:9000/
       COBALT_API_KEY: ${COBALT_API_KEY:-}
       MAX_FILE_MB: ${MAX_FILE_MB:-100}
     read_only: true

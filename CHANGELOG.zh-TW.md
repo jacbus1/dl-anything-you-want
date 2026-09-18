@@ -12,7 +12,7 @@
 ## 文件準備 — 2026-09-15（America/Toronto）
 
 - 把初始簡介改成獨立英文／繁體中文 README。
-- 加入 MIT License，署名 jacbus1 and FramePocket contributors。
+- 加入 MIT License，署名 jacbus1 and DL Anything You Want contributors。
 - 加入分開的雙語第三方聲明、授權、部署、研究、驗證、安全及參與指南。
 - 明確標示 repo 在可執行程式匯入前只有文件。
 
