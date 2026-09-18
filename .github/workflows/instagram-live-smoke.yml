@@ -1,0 +1,129 @@
+name: Instagram live download smoke
+
+on:
+  push:
+    branches:
+      - feat/import-runnable-source
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-instagram:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PHOTO_URL: https://www.instagram.com/p/DcjLT7uFChz/?stkn=djQyMjEybHNpOGE1
+      REEL_URL: https://www.instagram.com/reel/DdXrvBeTZtA/?stkn=MTZjdDRvamdtYWhqNg==
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Start self-hosted Cobalt
+        run: |
+          docker run -d --name cobalt \
+            -p 9000:9000 \
+            -e API_URL=http://127.0.0.1:9000/ \
+            ghcr.io/imputnet/cobalt:11
+          for attempt in {1..45}; do
+            if curl --fail --silent http://127.0.0.1:9000/ >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          echo 'Cobalt did not become healthy.' >&2
+          exit 1
+
+      - name: Probe Cobalt against both real Instagram posts
+        shell: bash
+        run: |
+          set -euo pipefail
+          probe() {
+            local label="$1" url="$2" out="/tmp/cobalt-${label}.json"
+            curl --silent --show-error --fail-with-body \
+              -H 'Accept: application/json' \
+              -H 'Content-Type: application/json' \
+              --data "$(jq -nc --arg url "$url" '{url:$url,alwaysProxy:true,localProcessing:"disabled",downloadMode:"auto"}')" \
+              http://127.0.0.1:9000/ > "$out" || true
+            jq -e 'type == "object"' "$out" >/dev/null
+            status="$(jq -r '.status // "missing"' "$out")"
+            error_code="$(jq -r '.error.code // empty' "$out")"
+            echo "${label}: cobalt status=${status}${error_code:+ error=${error_code}}"
+            if [ "$status" = error ] || [ "$status" = missing ]; then
+              exit 1
+            fi
+          }
+          probe photo "$PHOTO_URL"
+          probe reel "$REEL_URL"
+
+      - name: Start FramePocket with Cobalt
+        shell: bash
+        run: |
+          set -euo pipefail
+          HOST=127.0.0.1 \
+          PORT=3000 \
+          PUBLIC_ORIGIN=http://127.0.0.1:3000 \
+          ALLOWED_ORIGINS=http://127.0.0.1:3000 \
+          COBALT_URL=http://127.0.0.1:9000/ \
+          node server.mjs >/tmp/framepocket.log 2>&1 &
+          echo $! >/tmp/framepocket.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/api/health | jq -e '.status=="ok" and .instagram=="configured-not-live-verified"' >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo 'FramePocket did not become healthy.' >&2
+          cat /tmp/framepocket.log >&2
+          exit 1
+
+      - name: Download real Instagram photo through FramePocket
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail-with-body \
+            -H 'Origin: http://127.0.0.1:3000' \
+            -H 'Content-Type: application/json' \
+            --data "$(jq -nc --arg url "$PHOTO_URL" '{url:$url,consent:true}')" \
+            http://127.0.0.1:3000/api/resolve > /tmp/photo-resolve.json
+          jq -e '.platform=="instagram" and (.items|length)>=1 and ([.items[].type]|index("photo") != null)' /tmp/photo-resolve.json >/dev/null
+          path="$(jq -r '[.items[]|select(.type=="photo")][0].path' /tmp/photo-resolve.json)"
+          test "$path" != null
+          curl --silent --show-error --fail \
+            -D /tmp/photo.headers \
+            "http://127.0.0.1:3000${path}" \
+            -o /tmp/instagram-photo.bin
+          mime="$(awk -F': *' 'tolower($1)=="content-type"{print tolower($2)}' /tmp/photo.headers | tr -d '\r' | tail -1)"
+          bytes="$(wc -c </tmp/instagram-photo.bin)"
+          case "$mime" in image/jpeg|image/png|image/webp) ;; *) echo "Unexpected photo MIME: $mime" >&2; exit 1;; esac
+          test "$bytes" -gt 1024
+          echo "photo: downloaded ${bytes} bytes (${mime})"
+
+      - name: Download real Instagram Reel through FramePocket
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail-with-body \
+            -H 'Origin: http://127.0.0.1:3000' \
+            -H 'Content-Type: application/json' \
+            --data "$(jq -nc --arg url "$REEL_URL" '{url:$url,consent:true}')" \
+            http://127.0.0.1:3000/api/resolve > /tmp/reel-resolve.json
+          jq -e '.platform=="instagram" and (.items|length)>=1 and ([.items[].type]|index("video") != null)' /tmp/reel-resolve.json >/dev/null
+          path="$(jq -r '[.items[]|select(.type=="video")][0].path' /tmp/reel-resolve.json)"
+          test "$path" != null
+          curl --silent --show-error --fail \
+            -D /tmp/reel.headers \
+            "http://127.0.0.1:3000${path}" \
+            -o /tmp/instagram-reel.bin
+          mime="$(awk -F': *' 'tolower($1)=="content-type"{print tolower($2)}' /tmp/reel.headers | tr -d '\r' | tail -1)"
+          bytes="$(wc -c </tmp/instagram-reel.bin)"
+          test "$mime" = video/mp4
+          test "$bytes" -gt 4096
+          echo "reel: downloaded ${bytes} bytes (${mime})"
+
+      - name: Clean up
+        if: always()
+        run: |
+          if [ -f /tmp/framepocket.pid ]; then kill "$(cat /tmp/framepocket.pid)" 2>/dev/null || true; fi
+          docker rm -f cobalt >/dev/null 2>&1 || true
+          rm -f /tmp/instagram-photo.bin /tmp/instagram-reel.bin /tmp/*-resolve.json /tmp/cobalt-*.json
