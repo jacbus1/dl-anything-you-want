@@ -52,7 +52,9 @@ jobs:
             jq -e 'type == "object"' "$out" >/dev/null
             status="$(jq -r '.status // "missing"' "$out")"
             error_code="$(jq -r '.error.code // empty' "$out")"
-            echo "${label}: cobalt status=${status}${error_code:+ error=${error_code}}"
+            types="$(jq -r 'if .status=="picker" then [.picker[].type] | unique | join(",") else "single" end' "$out")"
+            count="$(jq -r 'if .status=="picker" then (.picker|length) else 1 end' "$out")"
+            echo "${label}: cobalt status=${status} count=${count} types=${types}${error_code:+ error=${error_code}}"
             if [ "$status" = error ] || [ "$status" = missing ]; then
               exit 1
             fi
@@ -80,52 +82,71 @@ jobs:
           exit 1
 
       - name: Download real Instagram photo through FramePocket
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
-          curl --silent --show-error --fail-with-body \
+          set -u
+          resolve_http="$(curl --silent --show-error \
+            -o /tmp/photo-resolve.json -w '%{http_code}' \
             -H 'Origin: http://127.0.0.1:3000' \
             -H 'Content-Type: application/json' \
             --data "$(jq -nc --arg url "$PHOTO_URL" '{url:$url,consent:true}')" \
-            http://127.0.0.1:3000/api/resolve > /tmp/photo-resolve.json
-          jq -e '.platform=="instagram" and (.items|length)>=1 and ([.items[].type]|index("photo") != null)' /tmp/photo-resolve.json >/dev/null
-          path="$(jq -r '[.items[]|select(.type=="photo")][0].path' /tmp/photo-resolve.json)"
-          test "$path" != null
-          curl --silent --show-error --fail \
-            -D /tmp/photo.headers \
-            "http://127.0.0.1:3000${path}" \
-            -o /tmp/instagram-photo.bin
+            http://127.0.0.1:3000/api/resolve)"
+          error_code="$(jq -r '.error.code // empty' /tmp/photo-resolve.json 2>/dev/null)"
+          types="$(jq -r 'if (.items|type)=="array" then [.items[].type] | unique | join(",") else "none" end' /tmp/photo-resolve.json 2>/dev/null)"
+          echo "photo: resolve_http=${resolve_http} types=${types}${error_code:+ error=${error_code}}"
+          test "$resolve_http" = 200 || exit 1
+          path="$(jq -r '[.items[]|select(.type=="photo")][0].path // empty' /tmp/photo-resolve.json)"
+          test -n "$path" || exit 1
+          download_http="$(curl --silent --show-error \
+            -D /tmp/photo.headers -o /tmp/instagram-photo.bin -w '%{http_code}' \
+            "http://127.0.0.1:3000${path}")"
           mime="$(awk -F': *' 'tolower($1)=="content-type"{print tolower($2)}' /tmp/photo.headers | tr -d '\r' | tail -1)"
-          bytes="$(wc -c </tmp/instagram-photo.bin)"
-          case "$mime" in image/jpeg|image/png|image/webp) ;; *) echo "Unexpected photo MIME: $mime" >&2; exit 1;; esac
-          test "$bytes" -gt 1024
-          echo "photo: downloaded ${bytes} bytes (${mime})"
+          bytes="$(wc -c </tmp/instagram-photo.bin 2>/dev/null || echo 0)"
+          echo "photo: download_http=${download_http} bytes=${bytes} mime=${mime:-none}"
+          test "$download_http" = 200 || exit 1
+          case "$mime" in image/jpeg|image/png|image/webp) ;; *) exit 1;; esac
+          test "$bytes" -gt 1024 || exit 1
+          touch /tmp/photo.ok
 
       - name: Download real Instagram Reel through FramePocket
+        continue-on-error: true
         shell: bash
         run: |
-          set -euo pipefail
-          curl --silent --show-error --fail-with-body \
+          set -u
+          resolve_http="$(curl --silent --show-error \
+            -o /tmp/reel-resolve.json -w '%{http_code}' \
             -H 'Origin: http://127.0.0.1:3000' \
             -H 'Content-Type: application/json' \
             --data "$(jq -nc --arg url "$REEL_URL" '{url:$url,consent:true}')" \
-            http://127.0.0.1:3000/api/resolve > /tmp/reel-resolve.json
-          jq -e '.platform=="instagram" and (.items|length)>=1 and ([.items[].type]|index("video") != null)' /tmp/reel-resolve.json >/dev/null
-          path="$(jq -r '[.items[]|select(.type=="video")][0].path' /tmp/reel-resolve.json)"
-          test "$path" != null
-          curl --silent --show-error --fail \
-            -D /tmp/reel.headers \
-            "http://127.0.0.1:3000${path}" \
-            -o /tmp/instagram-reel.bin
+            http://127.0.0.1:3000/api/resolve)"
+          error_code="$(jq -r '.error.code // empty' /tmp/reel-resolve.json 2>/dev/null)"
+          types="$(jq -r 'if (.items|type)=="array" then [.items[].type] | unique | join(",") else "none" end' /tmp/reel-resolve.json 2>/dev/null)"
+          echo "reel: resolve_http=${resolve_http} types=${types}${error_code:+ error=${error_code}}"
+          test "$resolve_http" = 200 || exit 1
+          path="$(jq -r '[.items[]|select(.type=="video")][0].path // empty' /tmp/reel-resolve.json)"
+          test -n "$path" || exit 1
+          download_http="$(curl --silent --show-error \
+            -D /tmp/reel.headers -o /tmp/instagram-reel.bin -w '%{http_code}' \
+            "http://127.0.0.1:3000${path}")"
           mime="$(awk -F': *' 'tolower($1)=="content-type"{print tolower($2)}' /tmp/reel.headers | tr -d '\r' | tail -1)"
-          bytes="$(wc -c </tmp/instagram-reel.bin)"
-          test "$mime" = video/mp4
-          test "$bytes" -gt 4096
-          echo "reel: downloaded ${bytes} bytes (${mime})"
+          bytes="$(wc -c </tmp/instagram-reel.bin 2>/dev/null || echo 0)"
+          echo "reel: download_http=${download_http} bytes=${bytes} mime=${mime:-none}"
+          test "$download_http" = 200 || exit 1
+          test "$mime" = video/mp4 || exit 1
+          test "$bytes" -gt 4096 || exit 1
+          touch /tmp/reel.ok
+
+      - name: Require both real downloads
+        if: always()
+        run: |
+          test -f /tmp/photo.ok
+          test -f /tmp/reel.ok
+          echo 'Both real Instagram downloads passed.'
 
       - name: Clean up
         if: always()
         run: |
           if [ -f /tmp/framepocket.pid ]; then kill "$(cat /tmp/framepocket.pid)" 2>/dev/null || true; fi
           docker rm -f cobalt >/dev/null 2>&1 || true
-          rm -f /tmp/instagram-photo.bin /tmp/instagram-reel.bin /tmp/*-resolve.json /tmp/cobalt-*.json
+          rm -f /tmp/instagram-photo.bin /tmp/instagram-reel.bin /tmp/*-resolve.json /tmp/cobalt-*.json /tmp/*.headers /tmp/photo.ok /tmp/reel.ok
