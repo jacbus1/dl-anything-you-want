@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f5f6f2"><meta name="referrer" content="no-referrer">
-  <meta name="description" content="Facebook、Instagram、Threads、TikTok 公開影片下載器。">
+  <meta name="description" content="Facebook、Instagram、Threads、TikTok、YouTube 影片、音訊、圖片及多語文字轉錄工具。">
   <meta name="author" content="JACKY H. (@jacbus1)">
   <meta property="og:type" content="website"><meta property="og:locale" content="zh_TW">
-  <meta property="og:title" content="DL Anything You Want"><meta property="og:description" content="Facebook、Instagram、Threads、TikTok 公開影片下載器。">
+  <meta property="og:title" content="DL Anything You Want"><meta property="og:description" content="Facebook、Instagram、Threads、TikTok、YouTube 影片、音訊、圖片及多語文字轉錄工具。">
   <meta property="og:url" content="https://jacbus1.github.io/dl-anything-you-want/">
   <link rel="canonical" href="https://jacbus1.github.io/dl-anything-you-want/">
   <link rel="alternate" hreflang="zh-Hant" href="https://jacbus1.github.io/dl-anything-you-want/">
   <link rel="alternate" hreflang="en" href="https://jacbus1.github.io/dl-anything-you-want/en/">
   <link rel="alternate" hreflang="x-default" href="https://jacbus1.github.io/dl-anything-you-want/en/">
-  <title>Facebook / Instagram / Threads / TikTok Video Downloader</title>
+  <title>Facebook / Instagram / Threads / TikTok / YouTube Downloader</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./styles.css"><script src="./config.js" defer></script><script src="./app.js" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"DL Anything You Want","applicationCategory":"MultimediaApplication","operatingSystem":"Web","url":"https://jacbus1.github.io/dl-anything-you-want/","description":"Facebook、Instagram、Threads、TikTok 公開影片下載器。","author":{"@type":"Person","name":"JACKY H.","alternateName":"jacbus1","url":"https://github.com/jacbus1"},"codeRepository":"https://github.com/jacbus1/dl-anything-you-want","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"DL Anything You Want","applicationCategory":"MultimediaApplication","operatingSystem":"Web","url":"https://jacbus1.github.io/dl-anything-you-want/","description":"Facebook、Instagram、Threads、TikTok、YouTube 影片、音訊、圖片及多語文字轉錄工具。","author":{"@type":"Person","name":"JACKY H.","alternateName":"jacbus1","url":"https://github.com/jacbus1"},"codeRepository":"https://github.com/jacbus1/dl-anything-you-want","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
 <header class="nav shell">
@@ -24,14 +24,19 @@
 </header>
 <main class="shell">
   <section class="hero">
-    <h1>Facebook / Instagram /<br><em>Threads / TikTok</em><br>Video Downloader</h1>
-    <p class="intro">貼上公開影片網址，直接下載。</p>
+    <h1>Facebook / Instagram / Threads<br><em>TikTok / YouTube Downloader</em></h1>
+    <p class="intro">MP4 影片 · MP3 音訊 · PNG 圖片 · TEXT 文字</p>
   </section>
   <section class="workbench" aria-labelledby="download-title">
     <div class="bench-header"><h2 id="download-title">影片網址</h2><span id="connection" class="connection">檢查連線中</span></div>
     <form id="download-form">
-      <label class="sr-only" for="source-url">Facebook、Instagram、Threads 或 TikTok 影片網址</label>
-      <div class="input-wrap"><span class="link-icon" aria-hidden="true">↗</span><input id="source-url" name="url" type="url" placeholder="https://www.instagram.com/reel/…" required autocomplete="off" spellcheck="false"><button class="paste" type="button" id="paste">貼上</button></div>
+      <div class="selectors">
+        <fieldset><legend>平台</legend><div class="choice-row platform-choice"><label><input type="radio" name="platform" value="facebook"><span>Facebook</span></label><label><input type="radio" name="platform" value="instagram"><span>Instagram</span></label><label><input type="radio" name="platform" value="threads"><span>Threads</span></label><label><input type="radio" name="platform" value="tiktok"><span>TikTok</span></label><label><input type="radio" name="platform" value="youtube" checked><span>YouTube</span></label></div></fieldset>
+        <fieldset><legend>輸出格式</legend><div class="choice-row format-choice"><label><input type="radio" name="format" value="mp4" checked><span>MP4 <small>影片</small></span></label><label><input type="radio" name="format" value="mp3"><span>MP3 <small>音訊</small></span></label><label><input type="radio" name="format" value="png"><span>PNG <small>圖片</small></span></label><label><input type="radio" name="format" value="txt"><span>TEXT <small>文字</small></span></label></div></fieldset>
+        <label id="language-wrap" class="language-choice" hidden>語音語言<select id="language" name="language"><option value="auto">自動偵測</option><option value="zh">中文／普通話</option><option value="yue">粵語</option><option value="en">英文</option><option value="ja">日文</option><option value="ko">韓文</option><option value="es">西班牙文</option><option value="fr">法文</option><option value="de">德文</option></select></label>
+      </div>
+      <label class="sr-only" for="source-url">所選平台的公開媒體網址</label>
+      <div class="input-wrap"><span class="link-icon" aria-hidden="true">↗</span><input id="source-url" name="url" type="url" placeholder="https://www.youtube.com/watch?v=…" required autocomplete="off" spellcheck="false"><button class="paste" type="button" id="paste">貼上</button></div>
       <div class="form-bottom"><label class="consent"><input id="consent" type="checkbox" required><span>這是我的內容，或我已取得下載許可。</span></label><button id="resolve" type="submit" class="primary">下載 <span aria-hidden="true">→</span></button></div>
     </form>
     <p id="message" role="status" aria-live="polite" class="message">下載連結約一分鐘後失效。</p>

@@ -10,7 +10,7 @@ DL Anything You Want 0.1.x 是研究原型，並非經獨立安全審計的公�
 
 ## 已實作的邊界
 
-- 來源只接受指定 Instagram／Threads HTTPS 貼文 host 及路徑，不提供任意網址代理、登入或 cookies／session 上傳。
+- 來源只接受指定 Facebook／Instagram／Threads／TikTok／YouTube HTTPS host 及路徑，不提供任意網址代理、登入或訪客 cookies／session 上傳。
 - 媒體只接受 Meta CDN 網域後綴，或指定 Cobalt origin 的精確 `/tunnel` 路徑。非信任來源在 socket DNS lookup 時驗證公開 IPv4；重新導向有次數限制並逐次核對。不支援只有 IPv6 的目的地。
 - Cobalt 是受信任的**營運者設定**，可使用內網 HTTP／私人位址，不能讓終端使用者指定。此專案沒有審計 Cobalt 內部行為。
 - Threads 只解析 JSON，不執行來源腳本；核對貼文 ID，OG 後備解析亦要求 canonical／OG URL 相符。無法確認時停止。

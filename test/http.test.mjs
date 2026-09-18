@@ -14,7 +14,7 @@ async function boot(t,options={}) {
  return {base,post:(body,extra={})=>fetch(base+'/api/resolve',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',...extra},body:JSON.stringify(body)})};
 }
 const resolver=async()=>({items:[{url:'https://x.fbcdn.net/example.mp4',type:'video',filename:'dl-anything-01.mp4'}],experimental:true,provider:'test-fixture'});
-test('HTTP health does not claim live verification',async t=>{const {base}=await boot(t);const d=await(await fetch(base+'/api/health')).json();assert.equal(d.instagram,'not-configured');assert.equal(d.threads,'experimental-not-live-verified');});
+test('HTTP health reports configured engines without claiming live verification',async t=>{const {base}=await boot(t);const d=await(await fetch(base+'/api/health')).json();assert.equal(d.engine,'not-configured');assert.equal(d.transcriber,'not-configured');});
 test('HTTP frontend serves; secret paths are not public',async t=>{
  const {base}=await boot(t);const r=await fetch(base+'/');assert.equal(r.status,200);assert.match(await r.text(),/DL Anything You Want/);assert.equal(r.headers.get('x-content-type-options'),'nosniff');
  const english=await fetch(base+'/en/');assert.equal(english.status,200);assert.match(await english.text(),/<html lang="en">/);
@@ -28,6 +28,13 @@ test('HTTP CORS preflight permits only configured origin',async t=>{
 test('HTTP consent, session fields and unsupported URL checks',async t=>{
  const {post}=await boot(t,{resolver});for(const body of [{url:source},{url:source,consent:true,cookies:'secret'},{url:'https://evil.test',consent:true}]) assert.equal((await post(body)).status,400);
 });
+test('HTTP validates explicit platform and output choices',async t=>{
+ const {post}=await boot(t,{resolver});
+ assert.equal((await post({url:source,platform:'youtube',format:'mp4',consent:true})).status,400);
+ assert.equal((await post({url:source,platform:'instagram',format:'avi',consent:true})).status,400);
+ assert.equal((await post({url:source,platform:'instagram',format:'txt',language:'xx',consent:true})).status,400);
+ assert.equal((await post({url:source,platform:'instagram',format:'mp3',consent:true})).status,200);
+});
 test('HTTP missing engine fails honestly',async t=>{const {post}=await boot(t);const r=await post({url:source,consent:true});assert.equal(r.status,503);assert.equal((await r.json()).error.code,'ENGINE_NOT_CONFIGURED');});
 test('HTTP resolve issues opaque path, not upstream URL',async t=>{
  const {post}=await boot(t,{resolver});const r=await post({url:source,consent:true});assert.equal(r.status,200);const d=await r.json();assert.match(d.items[0].path,/^\/api\/file\/[a-f0-9]{48}$/);assert(!JSON.stringify(d).includes('fbcdn.net'));
@@ -39,6 +46,12 @@ test('HTTP fixture media stream and one-time link',async t=>{
 test('HTTP rejects error page disguised as media',async t=>{
  const openMedia=async()=>{const s=Readable.from(['<html>blocked</html>']);s.headers={'content-type':'text/html'};return s;};
  const {base,post}=await boot(t,{resolver,openMedia});const d=await(await post({url:source,consent:true})).json();const r=await fetch(base+d.items[0].path);assert.equal(r.status,502);assert.equal((await r.json()).error.code,'INVALID_MEDIA');
+});
+test('HTTP conversion failure returns an error before committing a download',async t=>{
+ const badResolver=async()=>({items:[{url:'https://x.fbcdn.net/example.mp4',type:'audio',filename:'dl-anything-01.mp3',transcode:'mp3'}],experimental:true,provider:'test'});
+ const openMedia=async()=>{const s=Readable.from(['not an mp4']);s.headers={'content-type':'video/mp4','content-length':'10'};return s;};
+ const {base,post}=await boot(t,{resolver:badResolver,openMedia});const d=await(await post({url:source,format:'mp3',consent:true})).json();
+ const r=await fetch(base+d.items[0].path);assert.equal(r.status,502);assert.equal((await r.json()).error.code,'CONVERSION_FAILED');
 });
 test('HTTP rate limiter ignores spoofed forwarding headers',async t=>{
  const {post}=await boot(t,{resolver});for(let i=0;i<6;i++)assert.equal((await post({url:source,consent:true},{'X-Forwarded-For':`8.8.8.${i}`})).status,200);

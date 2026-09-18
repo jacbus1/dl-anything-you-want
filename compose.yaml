@@ -35,8 +35,12 @@ services:
       COBALT_URL: http://cobalt:9000/
       COBALT_API_KEY: ${COBALT_API_KEY:-}
       MAX_FILE_MB: ${MAX_FILE_MB:-100}
+      WHISPER_BIN: /usr/local/bin/whisper-cli
+      WHISPER_MODEL: /opt/whisper/ggml-tiny.bin
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     pids_limit: 100
-    mem_limit: 256m
+    mem_limit: 512m
+    tmpfs:
+      - /tmp:size=256m,mode=1777

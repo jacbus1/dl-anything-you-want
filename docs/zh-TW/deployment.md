@@ -26,7 +26,9 @@
 docker compose up --build
 ```
 
-Docker 並非必要。依 [Cobalt 官方無 Docker 步驟](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)以 Node.js、Git、pnpm 啟動 Cobalt，在 `.env` 設定 `COBALT_URL=http://localhost:9000/`，再執行 `npm start`。宿主機連接埠只綁定 loopback；公開前應加上 HTTPS gateway 及防濫用控制。
+Docker 並非必要。先安裝 FFmpeg、whisper.cpp 及多語模型，再依 [Cobalt 官方無 Docker 步驟](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)以 Node.js、Git、pnpm 啟動 Cobalt，在 `.env` 設定 `COBALT_URL=http://localhost:9000/`，再執行 `npm start`。宿主機連接埠只綁定 loopback；公開前應加上 HTTPS gateway 及防濫用控制。
+
+一般公開 YouTube 影片通常不需要 cookies。若內容確實要求登入，Cobalt 可透過 `COOKIE_PATH` 使用由營運者管理的 `cookies.json`。檔案必須留在 repo 外，亦不要加入訪客 cookie 上傳欄位。
 
 以下除 repo 擁有者的 Pages origin 外，主機名稱均為佔位符：
 

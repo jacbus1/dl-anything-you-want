@@ -1,5 +1,21 @@
 # Changelog
 
+
+## Multilingual TEXT 0.4.0 — 2026-09-18
+
+- Add local multilingual speech-to-text with automatic detection plus Chinese, Cantonese, English, Japanese, Korean, Spanish, French and German choices.
+- Build pinned whisper.cpp 1.9.4 and a checksum-verified multilingual tiny model into the Docker application image.
+- Materialize and validate converted files before sending download headers, preventing failed FFmpeg jobs from returning empty 200 responses.
+- Add TEXT output and correct bilingual preparation/error labels.
+
+
+## Downloader and converter 0.3.0 — 2026-09-18
+
+- Add YouTube watch, short-link, Shorts and live URL handling through self-hosted Cobalt.
+- Separate platform and output selectors; support MP4 video, MP3 audio and PNG images where media is available.
+- Add FFmpeg conversion for PNG and Threads MP3, plus strict platform/format validation.
+- Verify YouTube MP4 and MP3 without cookies, and verify Threads PNG and MP3 conversion.
+
 **English** | [繁體中文](CHANGELOG.zh-TW.md)
 
 ## Source import — 2026-09-16

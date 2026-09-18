@@ -1,5 +1,21 @@
 # 更新記錄
 
+
+## 多語 TEXT 0.4.0 — 2026-09-18
+
+- 加入本機多語語音轉文字，可自動偵測，亦可指定中文、粵語、英、日、韓、西、法、德語。
+- Docker app 映像內建固定版本 whisper.cpp 1.9.4 及經 checksum 驗證的 tiny 多語模型。
+- 轉換成功並驗證檔案後才回傳下載 headers，避免 FFmpeg 失敗時得到 200 空檔。
+- 加入 TEXT 輸出及正確的中英文準備／錯誤文案。
+
+
+## 下載及轉換器 0.3.0 — 2026-09-18
+
+- 加入 YouTube watch、短網址、Shorts 及 live 網址，由自架 Cobalt 處理。
+- 平台與輸出格式分開選擇；在有相應媒體時提供 MP4 影片、MP3 音訊及 PNG 圖片。
+- 使用 FFmpeg 轉換 PNG 及 Threads MP3，並嚴格核對平台與格式。
+- 已在無 cookies 情況下驗證 YouTube MP4／MP3，亦驗證 Threads PNG／MP3 轉換。
+
 [English](CHANGELOG.md) | **繁體中文**
 
 ## 原始碼匯入 — 2026-09-16

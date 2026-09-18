@@ -10,7 +10,7 @@ Do not put credentials, active download tickets, private media or exploit detail
 
 ## Implemented boundaries
 
-- Source URLs are limited to specific Instagram/Threads HTTPS post hosts and paths. No arbitrary URL proxy, login or cookie/session upload.
+- Source URLs are limited to specific Facebook, Instagram, Threads, TikTok and YouTube HTTPS hosts and paths. No arbitrary URL proxy, login or visitor cookie/session upload.
 - Media is limited to Meta CDN host suffixes or the configured Cobalt origin's exact `/tunnel` path. Non-trusted outbound sockets validate public IPv4 addresses at DNS lookup; redirects are bounded and revalidated. IPv6-only destinations are unsupported.
 - Cobalt is trusted **operator configuration** and may use internal HTTP/private networks. End users cannot configure it. Its own extraction/network behavior is not audited here.
 - Threads parses JSON without executing scripts, matches post IDs and requires matching canonical/OG URLs for fallback. Ambiguous/unavailable results fail closed.

@@ -6,11 +6,14 @@
 
 | Check | Result |
 | --- | --- |
-| Unit, HTTP and repository tests | 87 passed, 0 failed |
+| Unit, HTTP and repository tests | 98 passed, 0 failed |
 | Docker Compose | App running; digest-pinned Cobalt 11.7.1 healthy |
 | Instagram Reel | Resolved and downloaded through the browser and API |
 | Downloaded Instagram file | MP4, 5,177,355 bytes; H.264 720×1280 + AAC; 52.636780 seconds |
 | Threads supplied share link | Video and image downloaded locally; see [test record](../threads-live-test-2026-09-18.md) |
+| YouTube without cookies | MP4 and MP3 downloaded through the app; see [test record](../youtube-live-test-2026-09-18.md) |
+| PNG / Threads MP3 conversion | 640×384 PNG and 128 kbps MP3 verified with FFmpeg / ffprobe |
+| Local multilingual TEXT | YouTube produced a 184-byte English transcript; the supplied Threads post produced a 24-byte auto-detected transcript |
 | English and Traditional Chinese pages | Rendered in the in-app browser; no console warnings or errors |
 | Facebook and TikTok | URL routing and rejection tests pass; no live links supplied for download testing |
 | GitHub Pages | Static frontend only; a separate Node/Cobalt host is required for public downloads |

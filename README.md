@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-A bilingual Facebook, Instagram, Threads and TikTok public video downloader. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
+A bilingual Facebook, Instagram, Threads, TikTok and YouTube downloader and converter. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
 
 > **Local prototype.** Compose includes Cobalt; Threads extraction is experimental. GitHub Pages publishes only the interface, not the download API.
 
@@ -10,10 +10,10 @@ A bilingual Facebook, Instagram, Threads and TikTok public video downloader. Bui
 
 | Component | Implementation | Verification boundary |
 | --- | --- | --- |
-| Responsive web interface | Link input, rights confirmation, file selection, English and Traditional Chinese pages | Responsive CSS and browser flow |
-| Facebook / Instagram / TikTok | Public video extraction through the included Cobalt service | Compatibility depends on the platform and upstream version |
-| Threads adapter | Anonymous HTML/JSON/OG parsing tied to the requested post ID; video and post media images | One public post was downloaded locally; platform changes can still break extraction |
-| File streaming | 60-second single-use tickets, MIME/byte limits, no application media archive | Supplied Instagram MP4 and Threads media downloaded locally |
+| Responsive web interface | Separate platform and MP4 / MP3 / PNG / TEXT selectors; English and Traditional Chinese pages | Desktop browser flow verified |
+| Facebook / Instagram / TikTok / YouTube | Public media extraction through the included Cobalt service | YouTube MP4 and MP3 verified without cookies; other compatibility depends on platform changes |
+| Threads adapter | Anonymous exact-post parsing with local FFmpeg conversion | Supplied post verified as MP4, MP3 and PNG; multilingual TEXT uses local Whisper |
+| File streaming | 60-second single-use tickets, MIME/byte limits, no application media archive | Playable formats checked with `ffprobe` |
 | Deployment | Node server, optional Docker Compose, CI and Pages workflow | Pages serves the static frontend only |
 
 No account crawling, private posts, Stories, login, cookies upload, CAPTCHA/DRM bypass or batch ZIP.
@@ -28,7 +28,7 @@ docker compose up --build
 
 Open `http://localhost:3000`.
 
-Docker is optional. Without Docker, follow the [official Cobalt guide](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) to run Cobalt with Node.js, Git and pnpm, set `COBALT_URL` in `.env`, then run `npm start`.
+Docker is optional. Without Docker, install FFmpeg and whisper.cpp with a multilingual model, follow the [official Cobalt guide](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) to run Cobalt with Node.js, Git and pnpm, set `COBALT_URL` in `.env`, then run `npm start`.
 
 ### Manual Cobalt configuration
 
@@ -39,7 +39,9 @@ COBALT_URL=https://YOUR-OWN-COBALT-HOST/
 COBALT_API_KEY=
 ```
 
-The hostname is a placeholder. Compose includes a digest-pinned Cobalt image; manual startup requires `COBALT_URL`.
+The hostname is a placeholder. Compose includes a digest-pinned Cobalt image, FFmpeg, whisper.cpp 1.9.4 and the multilingual tiny model. Manual startup also sets `WHISPER_BIN` and `WHISPER_MODEL`; omit them only if TEXT output is not needed.
+
+Ordinary public YouTube MP4 and MP3 downloads passed without cookies. Some restricted public content can require authentication. If needed, configure an operator-owned `cookies.json` only inside Cobalt using its official `COOKIE_PATH` setting; the website never accepts or stores visitor cookies.
 
 Threads uses no configured login/session. This does not guarantee anonymous availability: blocked, login-required, rate-limited, changed or media-free pages may fail.
 
@@ -48,8 +50,10 @@ Threads uses no configured login/session. This does not guarantee anonymous avai
 ```text
 Static frontend (GitHub Pages or another host)
   -> your Node.js API
-     -> Facebook / Instagram / TikTok: self-hosted Cobalt
+     -> Facebook / Instagram / TikTok / YouTube: self-hosted Cobalt
      -> Threads: experimental anonymous public HTML parser
+     -> FFmpeg: PNG / MP3 conversion and 16 kHz speech audio
+     -> whisper.cpp: local multilingual TEXT transcription
   -> short-lived file tickets -> bounded media streams
 ```
 

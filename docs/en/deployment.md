@@ -26,7 +26,9 @@ The included Compose starts DL Anything You Want and a digest-pinned Cobalt serv
 docker compose up --build
 ```
 
-Docker is optional. Follow the [official non-Docker Cobalt steps](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) with Node.js, Git and pnpm, set `COBALT_URL=http://localhost:9000/` in `.env`, then run `npm start`. The host port is loopback-only. Use an HTTPS gateway and abuse controls before public exposure.
+Docker is optional. Install FFmpeg plus whisper.cpp and a multilingual model, follow the [official non-Docker Cobalt steps](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) with Node.js, Git and pnpm, set `COBALT_URL=http://localhost:9000/` in `.env`, then run `npm start`. The host port is loopback-only. Use an HTTPS gateway and abuse controls before public exposure.
+
+Public YouTube videos normally do not need cookies. For content that legitimately requires authentication, Cobalt supports an operator-managed `cookies.json` through `COOKIE_PATH`. Keep it outside the repository; never add a visitor cookie upload field.
 
 Example values below are placeholders except for the repository owner's Pages origin:
 

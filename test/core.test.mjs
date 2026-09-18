@@ -21,7 +21,10 @@ for (const [input,platform,id] of [
  ['https://www.tiktok.com/@creator/video/1234567890123456789','tiktok','1234567890123456789'],
  ['https://vt.tiktok.com/ZSabc123/','tiktok','ZSabc123'],
  ['https://www.facebook.com/reel/123456789','facebook','123456789'],
- ['https://fb.watch/Abc_123/','facebook','Abc_123']]) {
+ ['https://fb.watch/Abc_123/','facebook','Abc_123'],
+ ['https://www.youtube.com/watch?v=aqz-KE-bpKQ','youtube','aqz-KE-bpKQ'],
+ ['https://youtu.be/aqz-KE-bpKQ?t=4','youtube','aqz-KE-bpKQ'],
+ ['https://www.youtube.com/shorts/aqz-KE-bpKQ','youtube','aqz-KE-bpKQ']]) {
  test(`normalizes ${input}`,()=>{const s=normalizeSource(input);assert.equal(s.platform,platform);assert.equal(s.id,id);assert(!s.url.includes('#'));});
 }
 for (const input of [null, '', 1,'http://instagram.com/p/ABC123/','https://instagram.com.evil.test/p/ABC123/',
@@ -29,6 +32,7 @@ for (const input of [null, '', 1,'http://instagram.com/p/ABC123/','https://insta
  'https://127.0.0.1/p/ABC123/','https://instagram.com/author/','https://instagram.com/stories/author/123/',
  'https://threads.com/@author/','https://evil.test','javascript:alert(1)',
  'https://tiktok.com.evil.test/@a/video/123456','https://facebook.com.evil.test/reel/123456',
+ 'https://youtube.com.evil.test/watch?v=aqz-KE-bpKQ','https://www.youtube.com/playlist?list=PL123',
  'https://instagram.com/p/ABC%2f123/','https://instagram.com\\@evil.test/p/ABC123/']) {
  test(`rejects unsafe/unsupported input ${String(input)}`,()=>assert.throws(()=>normalizeSource(input)));
 }
@@ -41,6 +45,7 @@ test('media domain boundary and tunnel scope',()=>{
 });
 test('Cobalt mixed carousel',()=>{const x=parseCobalt({status:'picker',picker:[{type:'photo',url:'https://x.fbcdn.net/a.jpg'},{type:'video',url:cdn}]},cobalt);assert.equal(x.length,2);assert.equal(x[0].type,'photo');assert.equal(x[1].filename,'dl-anything-02.mp4');});
 test('Cobalt signed tunnel',()=>assert.equal(parseCobalt({status:'tunnel',url:'http://cobalt:9000/tunnel?id=123',filename:'bad-caption.mp4'},cobalt)[0].filename,'dl-anything-01.mp4'));
+test('Cobalt audio tunnel is typed and renamed as MP3',()=>{const x=parseCobalt({status:'tunnel',url:'http://cobalt:9000/tunnel?id=123',filename:'untrusted title.mp3'},cobalt,'mp3')[0];assert.equal(x.type,'audio');assert.equal(x.filename,'dl-anything-01.mp3');});
 test('Cobalt redirects support a single image',()=>assert.equal(parseCobalt({status:'redirect',url:'https://x.fbcdn.net/a.jpg',filename:'a.jpg'},cobalt)[0].type,'photo'));
 test('Cobalt unknown/error/unsafe response fails closed',()=>{for(const d of [{status:'error'},{status:'local-processing'},{status:'picker',picker:[]},{status:'redirect',url:'https://evil.test/a.mp4'},{status:'picker',picker:[{type:'audio',url:cdn}]}]) assert.throws(()=>parseCobalt(d,cobalt));});
 test('Threads matches exact post, never recommendations',()=>{

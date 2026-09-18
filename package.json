@@ -1,9 +1,9 @@
 {
   "name": "dl-anything-you-want",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "A Facebook, Instagram, Threads and TikTok public video downloader.",
+  "description": "A bilingual Facebook, Instagram, Threads, TikTok and YouTube downloader and converter.",
   "engines": {
     "node": ">=22"
   },
@@ -27,6 +27,12 @@
     "facebook",
     "threads",
     "tiktok",
+    "youtube",
+    "mp3",
+    "mp4",
+    "png",
+    "speech-to-text",
+    "transcription",
     "media-downloader",
     "self-hosted",
     "prototype"
