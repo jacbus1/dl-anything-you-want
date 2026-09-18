@@ -2,11 +2,9 @@
 
 [English](../en/deployment.md) | **繁體中文** | [README](../../README.zh-TW.md)
 
-> **文件階段：可執行程式尚未匯入 repo。** 技術及部署說明適用於另行準備的程式包，不代表此分支已包含程式或已上線。以下指令需要程式包，不能在這個只有文件的分支執行。
-
 公開 repo 與建立可用的下載服務是兩件事。原始碼目的地為 `jacbus1/framepocket`，目前沒有預設後端地址。預期 Pages 網址 `https://jacbus1.github.io/framepocket/` **須待 Pages 成功部署才成立**，不是已上線聲明。
 
-## 匯入程式後的本機開發
+## 本機開發
 
 使用 Node.js 22 或相容的較新版本。複製 `.env.example` 為 `.env`，依次執行 `npm run check`、`npm test`、`npm start`，開啟 `http://localhost:3000`。沒有需要 npm install 的執行依賴。
 
@@ -22,7 +20,7 @@
 
 ## 引擎及 API 主機
 
-依 [官方說明](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)獨立部署 Cobalt，核對並鎖定上游版本及授權。已準備的 Compose **只啟動 FramePocket**。Cobalt 返回的 tunnel 網址必須可由 Node API 連接。Docker 的 localhost 指同一容器，不是其他服務或宿主機。
+依 [官方說明](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)獨立部署 Cobalt，核對並鎖定上游版本及授權。附帶 Compose **只啟動 FramePocket**。Cobalt 返回的 tunnel 網址必須可由 Node API 連接。Docker 的 localhost 指同一容器，不是其他服務或宿主機。
 
 ```sh
 cp .env.example .env
@@ -54,11 +52,11 @@ window.FRAMEPOCKET_CONFIG = Object.freeze({
 });
 ```
 
-不可加入任何秘密資料。留空 `apiBase` 代表使用目前網站 origin，適合已準備的 Node 伺服器，不適合沒有 API 的 Pages 網站。
+不可加入任何秘密資料。留空 `apiBase` 代表使用目前網站 origin，適合內附 Node 伺服器，不適合沒有 API 的 Pages 網站。
 
-## 匯入程式／workflow 並審閱後發佈 Pages
+## 審閱後發佈 Pages
 
-先合併已審閱的程式／workflow PR，再到 repo 的 Settings → Pages 選 **GitHub Actions**。之後到 Actions 從 `main` 手動執行 **Publish frontend to Pages**。已準備的 workflow 會先做檢查及測試，只上傳 `web/`，不建立 Cobalt、API 或 API 的 DNS／TLS，亦不會每次 push 都自動部署。這個文件 PR 並不包含該 workflow。
+合併首版 PR 後，到 repo 的 Settings → Pages，選 **GitHub Actions**。再到 Actions 從 `main` 手動執行 **Publish frontend to Pages**。workflow 會先做檢查及測試，只上傳 `web/`，不建立 Cobalt、API 或 API 的 DNS／TLS，亦不會每次 push 都自動部署。
 
 官方參考：[Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)、[發佈來源](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 

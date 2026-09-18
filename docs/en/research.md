@@ -2,8 +2,6 @@
 
 **English** | [繁體中文](../zh-TW/research.md) | [README](../../README.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch.
-
 Research baseline: 2026-09-15 (America/Toronto). These are public-source research notes, not a live benchmark. No listed third-party downloader was tested against real platform media in this preparation.
 
 ## Chosen design

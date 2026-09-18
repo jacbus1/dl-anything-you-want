@@ -2,8 +2,6 @@
 
 **English** | [繁體中文](SECURITY.zh-TW.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch.
-
 FramePocket 0.1.x is a research prototype, not an independently audited public service. No stable-version support or response-time SLA is promised.
 
 ## Reporting

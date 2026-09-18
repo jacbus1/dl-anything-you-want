@@ -1,0 +1,32 @@
+{
+  "name": "framepocket",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A public-media download interface with a self-hosted Cobalt adapter and an experimental anonymous Threads parser.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "test": "node --test",
+    "check": "node --check server.mjs && node --check lib/core.mjs && node --check lib/network.mjs && node --check lib/providers.mjs && node --check web/app.js && node --check web/config.js"
+  },
+  "license": "MIT",
+  "author": "jacbus1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacbus1/framepocket.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jacbus1/framepocket/issues"
+  },
+  "homepage": "https://github.com/jacbus1/framepocket#readme",
+  "keywords": [
+    "instagram",
+    "threads",
+    "media-downloader",
+    "self-hosted",
+    "prototype"
+  ]
+}

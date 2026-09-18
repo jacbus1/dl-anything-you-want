@@ -2,8 +2,6 @@
 
 **English** | [繁體中文](THIRD_PARTY_NOTICES.zh-TW.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch.
-
 The [MIT License](LICENSE) applies to original FramePocket materials, not every service, runtime, tool or media file used alongside them. No upstream downloader source, third-party frontend, font file, platform media or credential is bundled in this repository.
 
 | Component | Relationship | License / primary source |

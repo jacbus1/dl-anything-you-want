@@ -2,8 +2,6 @@
 
 **English** | [繁體中文](../zh-TW/licensing.md) | [README](../../README.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch.
-
 ## Original project
 
 The canonical legal text is the English [LICENSE](../../LICENSE): MIT, copyright 2026 jacbus1 and FramePocket contributors. It covers original application code, interface and documentation. The Chinese guide is explanatory, not a second or modified license.
@@ -12,7 +10,7 @@ The canonical legal text is the English [LICENSE](../../LICENSE): MIT, copyright
 
 ## External Cobalt service
 
-The prepared source package contains an independently written HTTP adapter, not a bundled copy of Cobalt. The upstream [API license](https://github.com/imputnet/cobalt/blob/main/api/LICENSE) is AGPL-3.0. In particular, section 13 addresses corresponding-source access for users interacting remotely with modified versions. Distribution can create additional obligations. Review the exact version and integration; service separation is not a universal exemption.
+The repository contains an independently written HTTP adapter, not a bundled copy of Cobalt. The upstream [API license](https://github.com/imputnet/cobalt/blob/main/api/LICENSE) is AGPL-3.0. In particular, section 13 addresses corresponding-source access for users interacting remotely with modified versions. Distribution can create additional obligations. Review the exact version and integration; service separation is not a universal exemption.
 
 The upstream [web README](https://github.com/imputnet/cobalt/blob/main/web/README.md) specifies CC-BY-NC-SA-4.0 for its frontend, with separately described branding/assets. That frontend is not used in FramePocket. Do not copy it into this MIT project and assume it becomes MIT.
 

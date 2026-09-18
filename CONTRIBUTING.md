@@ -2,8 +2,6 @@
 
 **English** | [繁體中文](CONTRIBUTING.zh-TW.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch.
-
 Use a topic branch and pull request. Keep the English and Traditional Chinese documentation editions in sync. The site UI is currently Traditional Chinese; documentation translation alone does not add an English UI.
 
 Run `npm run check` and `npm test` on Node.js 22-compatible runtime. Add synthetic regression fixtures for behavior changes. Label local, mocked, live-platform and real-device tests separately; never equate a green unit suite with working Instagram/Threads extraction.

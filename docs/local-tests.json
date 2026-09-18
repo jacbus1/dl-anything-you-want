@@ -1,14 +1,20 @@
 {
-  "scope": "separately prepared source package; not repository CI",
-  "node": "v22.16.0",
-  "tests": 74,
-  "passed": 74,
+  "scope": "source-import branch; local synthetic/unit/HTTP tests, not remote CI",
+  "date_utc": "2026-09-16",
+  "base_commit": "9dab4f197de6acacb299ae17b9fa5062ba68f241",
+  "source_package": "framepocket-0.1.0-bilingual-source.zip",
+  "source_package_sha256": "96c9168e4853f7e6f60aec5330f8aff8e98c661801e4b171c8a412ab314f706c",
+  "node": "v24.19.0",
+  "tests": 76,
+  "passed": 76,
   "failed": 0,
   "skipped": 0,
   "syntax_check": "passed",
   "live_instagram": "not tested",
   "live_threads": "not tested",
-  "docker": "not tested",
+  "docker": "unavailable: docker command not found; CI job added, result pending",
+  "browser": "unavailable: Chromium executable missing; installation timed out and returned HTTP 502",
   "real_devices": "not tested",
-  "source_import": "blocked; pending"
+  "pages_public_api": "not deployed or tested",
+  "source_import": "included in source-import branch; merge pending"
 }

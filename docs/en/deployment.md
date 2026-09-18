@@ -2,11 +2,9 @@
 
 **English** | [繁體中文](../zh-TW/deployment.md) | [README](../../README.md)
 
-> **Documentation stage: runnable source has not yet been imported.** Technical/deployment details describe the separately prepared source package, not code or a live service present on this branch. The commands below require that source package; they do not work on this documentation-only branch.
-
 Publishing this repository is separate from deploying a working download service. The source destination is `jacbus1/framepocket`; no backend address is preconfigured. The expected project Pages URL is `https://jacbus1.github.io/framepocket/` **only after a successful Pages deployment**, not an assertion that it is live.
 
-## Local development after source import
+## Local development
 
 Use Node.js 22 or compatible newer. Copy `.env.example` to `.env`, run `npm run check`, `npm test`, then `npm start`. Open `http://localhost:3000`. No npm install is required for runtime dependencies.
 
@@ -22,7 +20,7 @@ Use Node.js 22 or compatible newer. Copy `.env.example` to `.env`, run `npm run 
 
 ## Extraction and API hosting
 
-Deploy Cobalt separately using [its official instructions](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md). Review/pin the exact upstream version and its license. The prepared Compose starts **only FramePocket**. Cobalt must return tunnel URLs reachable from the Node API. In Docker, localhost refers to the same container, not another service or the host.
+Deploy Cobalt separately using [its official instructions](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md). Review/pin the exact upstream version and its license. The included Compose starts **only FramePocket**. Cobalt must return tunnel URLs reachable from the Node API. In Docker, localhost refers to the same container, not another service or the host.
 
 ```sh
 cp .env.example .env
@@ -54,11 +52,11 @@ window.FRAMEPOCKET_CONFIG = Object.freeze({
 });
 ```
 
-No secret may appear here. Empty `apiBase` uses the current origin, appropriate for the prepared Node server but not an API-less Pages site.
+No secret may appear here. Empty `apiBase` uses the current origin, appropriate for the included Node server but not an API-less Pages site.
 
-## Publish Pages after source/workflow import and review
+## Publish Pages after review
 
-Merge a reviewed source/workflow PR first. In repository Settings → Pages, select **GitHub Actions** as the source. In Actions, manually run **Publish frontend to Pages** from `main`. The prepared workflow runs checks/tests and uploads only `web/`; it does not provision Cobalt, an API, DNS or TLS for the API. It is deliberately not triggered by every push. That workflow is not part of this documentation PR.
+Merge the reviewed launch PR. In repository Settings → Pages, select **GitHub Actions** as the source. In Actions, manually run **Publish frontend to Pages** from `main`. The workflow runs checks/tests and uploads only `web/`; it does not provision Cobalt, an API, DNS or TLS for the API. The workflow is deliberately not triggered by every push.
 
 References: [Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), [publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
