@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-A bilingual Facebook, Instagram, Threads, TikTok and YouTube downloader and converter. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
+An English Facebook, Instagram, Threads, TikTok and YouTube downloader and converter. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
 
 > **Local prototype.** Compose includes Cobalt; Threads extraction is experimental. GitHub Pages publishes only the interface, not the download API.
 
@@ -10,9 +10,9 @@ A bilingual Facebook, Instagram, Threads, TikTok and YouTube downloader and conv
 
 | Component | Implementation | Verification boundary |
 | --- | --- | --- |
-| Responsive web interface | Separate platform and MP4 / MP3 / PNG / TEXT selectors; English and Traditional Chinese pages | Desktop browser flow verified |
+| Responsive web interface | Separate platform and MP4 / MP3 / PNG selectors; English interface | Desktop browser flow verified |
 | Facebook / Instagram / TikTok / YouTube | Public media extraction through the included Cobalt service | YouTube MP4 and MP3 verified without cookies; other compatibility depends on platform changes |
-| Threads adapter | Anonymous exact-post parsing with local FFmpeg conversion | Supplied post verified as MP4, MP3 and PNG; multilingual TEXT uses local Whisper |
+| Threads adapter | Anonymous exact-post parsing with local FFmpeg conversion | Supplied post verified as MP4, MP3 and PNG |
 | File streaming | 60-second single-use tickets, MIME/byte limits, no application media archive | Playable formats checked with `ffprobe` |
 | Deployment | Node server, optional Docker Compose, CI and Pages workflow | Pages serves the static frontend only |
 
@@ -28,7 +28,7 @@ docker compose up --build
 
 Open `http://localhost:3000`.
 
-Docker is optional. Without Docker, install FFmpeg and whisper.cpp with a multilingual model, follow the [official Cobalt guide](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) to run Cobalt with Node.js, Git and pnpm, set `COBALT_URL` in `.env`, then run `npm start`.
+Docker is optional. Without Docker, install FFmpeg, follow the [official Cobalt guide](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md) to run Cobalt with Node.js, Git and pnpm, set `COBALT_URL` in `.env`, then run `npm start`.
 
 ### Manual Cobalt configuration
 
@@ -39,7 +39,7 @@ COBALT_URL=https://YOUR-OWN-COBALT-HOST/
 COBALT_API_KEY=
 ```
 
-The hostname is a placeholder. Compose includes a digest-pinned Cobalt image, FFmpeg, whisper.cpp 1.9.4 and the multilingual tiny model. Manual startup also sets `WHISPER_BIN` and `WHISPER_MODEL`; omit them only if TEXT output is not needed.
+The hostname is a placeholder. Compose includes a digest-pinned Cobalt image and FFmpeg.
 
 Ordinary public YouTube MP4 and MP3 downloads passed without cookies. Some restricted public content can require authentication. If needed, configure an operator-owned `cookies.json` only inside Cobalt using its official `COOKIE_PATH` setting; the website never accepts or stores visitor cookies.
 
@@ -52,8 +52,7 @@ Static frontend (GitHub Pages or another host)
   -> your Node.js API
      -> Facebook / Instagram / TikTok / YouTube: self-hosted Cobalt
      -> Threads: experimental anonymous public HTML parser
-     -> FFmpeg: PNG / MP3 conversion and 16 kHz speech audio
-     -> whisper.cpp: local multilingual TEXT transcription
+     -> FFmpeg: PNG / MP3 conversion
   -> short-lived file tickets -> bounded media streams
 ```
 

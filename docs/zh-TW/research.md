@@ -6,7 +6,7 @@
 
 ## 採用架構
 
-原創靜態介面及 Node API；Facebook、Instagram、TikTok、YouTube 使用 Cobalt HTTP 轉接器，Threads 使用實驗性匿名 HTML 轉接器。FFmpeg 把圖片轉成 PNG，亦可把影片音訊轉成 MP3 或 16 kHz WAV；本機 whisper.cpp 產生多語 TEXT 轉錄。不預設借用第三方下載站的公開 API。
+原創靜態介面及 Node API；Facebook、Instagram、TikTok、YouTube 使用 Cobalt HTTP 轉接器，Threads 使用實驗性匿名 HTML 轉接器。FFmpeg 把圖片轉成 PNG，亦可把影片音訊轉成 MP3。不預設借用第三方下載站的公開 API。
 
 Cobalt 的 [API README](https://github.com/imputnet/cobalt/blob/main/api/README.md) 說明 Instagram 媒體支援，[API 協定](https://github.com/imputnet/cobalt/blob/main/docs/api.md) 包含 picker／redirect／tunnel 回應。DL Anything You Want 要求 `alwaysProxy: true` 及 `localProcessing: "disabled"`，遇到不支援回應會拒絕處理。這是協定整合，不是真實相容性認證。
 

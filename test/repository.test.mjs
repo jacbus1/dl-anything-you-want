@@ -55,7 +55,7 @@ test('Pages is manual, main-only and uploads only static web assets', async () =
   assert.doesNotMatch(source, /\n  push:/);
   assert.match(await read('.gitignore'), /!\.env\.example/);
 });
-test('bilingual and discovery files identify the product and author', async () => {
+test('English discovery pages identify the product and author', async () => {
   for (const page of ['web/index.html','web/en/index.html']) {
     const source=await read(page);
     assert.match(source,/DL Anything You Want/);

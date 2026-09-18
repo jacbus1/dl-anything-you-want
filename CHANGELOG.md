@@ -1,6 +1,12 @@
 # Changelog
 
 
+## Media-only 0.4.1 — 2026-09-18
+
+- Use one English interface with MP4, MP3 and PNG outputs only.
+- Remove TEXT transcription, language selection, whisper.cpp and the bundled model.
+- Keep FFmpeg for MP3 and PNG conversion, reducing Docker build size and time.
+
 ## Multilingual TEXT 0.4.0 — 2026-09-18
 
 - Add local multilingual speech-to-text with automatic detection plus Chinese, Cantonese, English, Japanese, Korean, Spanish, French and German choices.

@@ -44,14 +44,6 @@ test('YouTube MP3 requests Cobalt audio conversion',async()=>{
   }});
   assert.equal(result.items[0].type,'audio');assert.equal(result.items[0].filename,'dl-anything-01.mp3');
 });
-test('YouTube TEXT requests audio and marks it for local multilingual transcription',async()=>{
-  const source=normalizeSource('https://youtu.be/aqz-KE-bpKQ');
-  const result=await resolveMedia(source,{cobaltURL:'http://cobalt:9000/',cobaltKey:''},{format:'txt',open:async(url,options)=>{
-    assert.equal(JSON.parse(options.body).downloadMode,'audio');
-    const stream=Readable.from([Buffer.from(JSON.stringify({status:'tunnel',url:'http://cobalt:9000/tunnel?id=1',filename:'title.mp3'}))]);stream.headers={'content-type':'application/json'};return stream;
-  }});
-  assert.equal(result.items[0].type,'text');assert.equal(result.items[0].filename,'dl-anything-01.txt');assert.equal(result.items[0].transcode,'txt');
-});
 test('Threads PNG selection marks images for conversion',async()=>{
   const photoPage=()=>{const stream=Readable.from([Buffer.from('<script type="application/json">{"code":"ABC123","media_type":1,"image_versions2":{"candidates":[{"url":"https://x.fbcdn.net/photo.jpg","width":100,"height":100}]}}</script>')]);stream.headers={'content-type':'text/html'};return stream;};
   const result=await resolveMedia(normalizeSource(post),{}, {format:'png',open:async()=>photoPage()});

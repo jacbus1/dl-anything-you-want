@@ -14,7 +14,7 @@ async function boot(t,options={}) {
  return {base,post:(body,extra={})=>fetch(base+'/api/resolve',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',...extra},body:JSON.stringify(body)})};
 }
 const resolver=async()=>({items:[{url:'https://x.fbcdn.net/example.mp4',type:'video',filename:'dl-anything-01.mp4'}],experimental:true,provider:'test-fixture'});
-test('HTTP health reports configured engines without claiming live verification',async t=>{const {base}=await boot(t);const d=await(await fetch(base+'/api/health')).json();assert.equal(d.engine,'not-configured');assert.equal(d.transcriber,'not-configured');});
+test('HTTP health reports configured engines without claiming live verification',async t=>{const {base}=await boot(t);const d=await(await fetch(base+'/api/health')).json();assert.equal(d.engine,'not-configured');});
 test('HTTP frontend serves; secret paths are not public',async t=>{
  const {base}=await boot(t);const r=await fetch(base+'/');assert.equal(r.status,200);assert.match(await r.text(),/DL Anything You Want/);assert.equal(r.headers.get('x-content-type-options'),'nosniff');
  const english=await fetch(base+'/en/');assert.equal(english.status,200);assert.match(await english.text(),/<html lang="en">/);
@@ -32,7 +32,7 @@ test('HTTP validates explicit platform and output choices',async t=>{
  const {post}=await boot(t,{resolver});
  assert.equal((await post({url:source,platform:'youtube',format:'mp4',consent:true})).status,400);
  assert.equal((await post({url:source,platform:'instagram',format:'avi',consent:true})).status,400);
- assert.equal((await post({url:source,platform:'instagram',format:'txt',language:'xx',consent:true})).status,400);
+ assert.equal((await post({url:source,platform:'instagram',format:'txt',consent:true})).status,400);
  assert.equal((await post({url:source,platform:'instagram',format:'mp3',consent:true})).status,200);
 });
 test('HTTP missing engine fails honestly',async t=>{const {post}=await boot(t);const r=await post({url:source,consent:true});assert.equal(r.status,503);assert.equal((await r.json()).error.code,'ENGINE_NOT_CONFIGURED');});

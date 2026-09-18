@@ -10,7 +10,3 @@ The application resolved and downloaded both requested outputs through its own `
 Both files passed `ffprobe`. The browser UI also produced a visible `dl-anything-01.mp3` result with YouTube and MP3 selected. The ignored files remain in `downloads/` and are not published.
 
 This confirms one ordinary public video at this time. It does not prove access to age-restricted, private, members-only, region-blocked or otherwise restricted videos. Cobalt documents optional operator-managed cookies for services that require authentication; this application does not accept visitor cookie uploads.
-
-## Local TEXT transcription
-
-The same `jNQXAC9IVRw` URL completed the full app flow with `format=txt` and `language=en`. Cobalt supplied audio, FFmpeg normalized it to 16 kHz mono WAV, and the checksum-pinned multilingual whisper.cpp tiny model produced a 184-byte UTF-8 transcript. The response was `200 text/plain; charset=utf-8` with an attachment filename. No cookies or API key were used.

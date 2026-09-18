@@ -31,7 +31,7 @@ jobs:
             if curl --fail --silent http://127.0.0.1:3000/api/health > health.json; then break; fi
             sleep 1
           done
-          node -e "const h=require('./health.json'); if(h.status!=='ok'||h.engine!=='configured'||h.transcriber!=='configured') process.exit(1)"
+          node -e "const h=require('./health.json'); if(h.status!=='ok'||h.engine!=='configured') process.exit(1)"
           curl --fail --silent http://127.0.0.1:3000/ | grep -q 'DL Anything You Want'
       - if: always()
         run: docker compose logs && docker compose down

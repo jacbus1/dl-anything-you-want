@@ -2,7 +2,7 @@
 
 [English](README.md) | **繁體中文**
 
-Facebook、Instagram、Threads、TikTok、YouTube 下載及轉換器，提供繁體中文及英文介面。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
+Facebook、Instagram、Threads、TikTok、YouTube 下載及轉換器，網站使用英文介面。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
 
 > **本機原型。** Compose 已包含 Cobalt；Threads 解析仍屬實驗性。GitHub Pages 只發佈介面，不會運行下載 API。
 
@@ -10,9 +10,9 @@ Facebook、Instagram、Threads、TikTok、YouTube 下載及轉換器，提供繁
 
 | 部分 | 已實作 | 驗證邊界 |
 | --- | --- | --- |
-| 響應式網站 | 分開選擇平台及 MP4／MP3／PNG／TEXT；中英文頁面 | 桌面瀏覽器流程已驗證 |
+| 響應式網站 | 分開選擇平台及 MP4／MP3／PNG；英文介面 | 桌面瀏覽器流程已驗證 |
 | Facebook／Instagram／TikTok／YouTube | 由內附的 Cobalt 解析公開媒體 | YouTube 無 cookies MP4／MP3 已驗證；其他相容性視平台改動而定 |
-| Threads 轉接器 | 匿名精確貼文解析及本機 FFmpeg 轉換 | 指定貼文已驗證 MP4、MP3、PNG；多語 TEXT 使用本機 Whisper |
+| Threads 轉接器 | 匿名精確貼文解析及本機 FFmpeg 轉換 | 指定貼文已驗證 MP4、MP3、PNG |
 | 檔案串流 | 60 秒單次連結、格式及大小限制，不建立媒體庫 | 已用 `ffprobe` 檢查可播放格式 |
 | 部署檔案 | Node 伺服器、可選 Docker Compose、CI 及 Pages workflow | Pages 只提供靜態介面 |
 
@@ -28,7 +28,7 @@ docker compose up --build
 
 開啟 `http://localhost:3000`。
 
-Docker 不是必要條件。無 Docker 時須安裝 FFmpeg、whisper.cpp 及多語模型，再依 [Cobalt 官方指南](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)以 Node.js、Git、pnpm 啟動 Cobalt，設定 `.env` 的 `COBALT_URL`，最後執行 `npm start`。
+Docker 不是必要條件。無 Docker 時須安裝 FFmpeg，再依 [Cobalt 官方指南](https://github.com/imputnet/cobalt/blob/main/docs/run-an-instance.md)以 Node.js、Git、pnpm 啟動 Cobalt，設定 `.env` 的 `COBALT_URL`，最後執行 `npm start`。
 
 ### 手動設定 Cobalt
 
@@ -39,7 +39,7 @@ COBALT_URL=https://YOUR-OWN-COBALT-HOST/
 COBALT_API_KEY=
 ```
 
-以上主機名稱只是佔位符。Compose 已包含固定映像版本的 Cobalt、FFmpeg、whisper.cpp 1.9.4 及 tiny 多語模型。手動啟動亦需設定 `WHISPER_BIN` 與 `WHISPER_MODEL`；不需要 TEXT 才可省略。
+以上主機名稱只是佔位符。Compose 已包含固定映像版本的 Cobalt 及 FFmpeg。
 
 一般公開 YouTube 影片已在沒有 cookies 的情況下成功下載 MP4 及 MP3。部分受限制的公開內容可能要求登入；如確有需要，只在你控制的 Cobalt 內依官方 `COOKIE_PATH` 設定管理 `cookies.json`。網站不接受或儲存訪客 cookies。
 
@@ -52,8 +52,7 @@ Threads 不使用已設定的登入／session，但不代表所有貼文均可�
   -> 你的 Node.js API
      -> Facebook／Instagram／TikTok／YouTube：自架 Cobalt
      -> Threads：實驗性匿名公開 HTML 解析器
-     -> FFmpeg：PNG／MP3 轉換及 16 kHz 語音音訊
-     -> whisper.cpp：本機多語 TEXT 轉錄
+     -> FFmpeg：PNG／MP3 轉換
   -> 短時下載票證 -> 有大小限制的媒體串流
 ```
 

@@ -1,6 +1,6 @@
 # DL Anything You Want
 
-Free, self-hostable downloader and converter for permitted Facebook, Instagram, Threads, TikTok and YouTube media. Outputs MP4 video, MP3 audio, PNG images and local multilingual TEXT transcripts where available.
+Free, self-hostable downloader and converter for permitted Facebook, Instagram, Threads, TikTok and YouTube media. Outputs MP4 video, MP3 audio and PNG images where available.
 
 ## Languages
 

@@ -16,11 +16,6 @@ The repository contains an independently written HTTP adapter, not a bundled cop
 
 The Docker application image installs Debian's FFmpeg package for PNG and MP3 conversion. FFmpeg's effective license depends on its build configuration and enabled libraries. Review the exact Debian package and [FFmpeg legal information](https://ffmpeg.org/legal.html) before redistributing an image.
 
-## whisper.cpp and model
-
-The Docker image builds [whisper.cpp 1.9.4](https://github.com/ggml-org/whisper.cpp) and downloads the multilingual ggml-tiny model with pinned checksums. whisper.cpp is MIT-licensed; review its model documentation and notices before redistributing the image.
-
-The upstream [web README](https://github.com/imputnet/cobalt/blob/main/web/README.md) specifies CC-BY-NC-SA-4.0 for its frontend, with separately described branding/assets. That frontend is not used in DL Anything You Want. Do not copy it into this MIT project and assume it becomes MIT.
 
 ## Contributions and media
 

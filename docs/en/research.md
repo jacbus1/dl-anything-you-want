@@ -6,7 +6,7 @@ Research baseline: 2026-09-18 (America/Toronto). The implementation was checked 
 
 ## Chosen design
 
-An original static UI and Node API, with a Cobalt HTTP adapter for Facebook, Instagram, TikTok and YouTube plus an experimental anonymous HTML adapter for Threads. FFmpeg converts images to PNG and video audio to MP3 or 16 kHz WAV; local whisper.cpp produces multilingual TEXT transcripts. No third-party download site's hosted API is used by default.
+An original static UI and Node API, with a Cobalt HTTP adapter for Facebook, Instagram, TikTok and YouTube plus an experimental anonymous HTML adapter for Threads. FFmpeg converts images to PNG and video audio to MP3. No third-party download site's hosted API is used by default.
 
 Cobalt's [API README](https://github.com/imputnet/cobalt/blob/main/api/README.md) documents Instagram media; its [API protocol](https://github.com/imputnet/cobalt/blob/main/docs/api.md) provides picker/redirect/tunnel responses. DL Anything You Want requests `alwaysProxy: true` and `localProcessing: "disabled"`, and rejects unsupported responses. This is protocol integration, not a live compatibility certificate.
 

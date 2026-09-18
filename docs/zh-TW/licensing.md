@@ -16,11 +16,6 @@
 
 Docker app 映像從 Debian 安裝 FFmpeg，用於 PNG／MP3 轉換。FFmpeg 的實際授權視 build 設定及啟用的 library 而定；再分發映像前應核對 Debian 套件及 [FFmpeg 法律資料](https://ffmpeg.org/legal.html)。
 
-## whisper.cpp 及模型
-
-Docker 映像會編譯 [whisper.cpp 1.9.4](https://github.com/ggml-org/whisper.cpp)，並以固定 checksum 下載 ggml-tiny 多語模型。whisper.cpp 採 MIT 授權；再分發映像前須核對其模型文件與聲明。
-
-上游 [web README](https://github.com/imputnet/cobalt/blob/main/web/README.md) 說明其前端採 CC-BY-NC-SA-4.0，品牌／資產另有條件。DL Anything You Want 沒有使用該前端。不要把它複製進來後便當成 MIT。
 
 ## 貢獻及媒體
 
