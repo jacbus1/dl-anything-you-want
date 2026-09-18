@@ -1,9 +1,9 @@
 {
   "name": "dl-anything-you-want",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
-  "description": "An English Facebook, Instagram, Threads, TikTok and YouTube downloader and converter.",
+  "description": "Social Media Downloader & Converter for Facebook (FB), Instagram (IG), Threads, YouTube and TikTok.",
   "engines": {
     "node": ">=22"
   },
@@ -33,6 +33,13 @@
     "png",
     "media-downloader",
     "self-hosted",
-    "prototype"
+    "prototype",
+    "facebook-downloader",
+    "instagram-downloader",
+    "threads-downloader",
+    "youtube-downloader",
+    "tiktok-downloader",
+    "social-media-downloader",
+    "media-converter"
   ]
 }

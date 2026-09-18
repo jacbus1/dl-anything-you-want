@@ -1,6 +1,12 @@
 # Changelog
 
 
+## GitHub discovery 0.4.2 — 2026-09-18
+
+- Position the repository as Social Media Downloader & Converter.
+- Add searchable Facebook (FB), Instagram (IG), Threads, YouTube and TikTok terms to project and web metadata.
+- Keep English as the default website and repository language.
+
 ## Media-only 0.4.1 — 2026-09-18
 
 - Use one English interface with MP4, MP3 and PNG outputs only.

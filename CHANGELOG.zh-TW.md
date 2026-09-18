@@ -1,6 +1,12 @@
 # 更新記錄
 
 
+## GitHub 搜尋資訊 0.4.2 — 2026-09-18
+
+- GitHub 專案定位改為 Social Media Downloader & Converter。
+- 在專案及網站 metadata 加入 Facebook（FB）、Instagram（IG）、Threads、YouTube、TikTok 搜尋字詞。
+- 網站及 GitHub 預設維持英文。
+
 ## 媒體輸出 0.4.1 — 2026-09-18
 
 - 介面統一為英文，只保留 MP4、MP3、PNG。

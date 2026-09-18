@@ -1,8 +1,8 @@
-# DL Anything You Want
+# Social Media Downloader & Converter
 
 [English](README.md) | **繁體中文**
 
-Facebook、Instagram、Threads、TikTok、YouTube 下載及轉換器，網站使用英文介面。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
+**DL Anything You Want** 是 Facebook（FB）、Instagram（IG）、Threads、YouTube、TikTok 的社交媒體下載及轉換器；網站預設使用英文。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
 
 > **本機原型。** Compose 已包含 Cobalt；Threads 解析仍屬實驗性。GitHub Pages 只發佈介面，不會運行下載 API。
 

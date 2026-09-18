@@ -98,7 +98,7 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
       if (req.method==='OPTIONS' && route==='/api/resolve') {
         res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers','Content-Type'); res.writeHead(204); res.end(); return;
       }
-      if (req.method==='GET' && route==='/api/health') return json(res,200,{status:'ok',version:'0.4.1',engine:config.cobaltURL?'configured':'not-configured'});
+      if (req.method==='GET' && route==='/api/health') return json(res,200,{status:'ok',version:'0.4.2',engine:config.cobaltURL?'configured':'not-configured'});
       const ip=req.socket.remoteAddress || 'unknown'; // Never trust a user-supplied X-Forwarded-For.
       if (req.method==='POST' && route==='/api/resolve') {
         if (!origin) throw new AppError('ORIGIN_REQUIRED','Requests must come from the configured website.',403);

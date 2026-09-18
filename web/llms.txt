@@ -1,11 +1,10 @@
-# DL Anything You Want
+# Social Media Downloader & Converter
 
-Free, self-hostable downloader and converter for permitted Facebook, Instagram, Threads, TikTok and YouTube media. Outputs MP4 video, MP3 audio and PNG images where available.
+DL Anything You Want is a free, self-hostable English downloader and converter for permitted Facebook (FB), Instagram (IG), Threads, YouTube and TikTok media. Outputs MP4 video, MP3 audio and PNG images where available.
 
-## Languages
+## Website
 
-- Traditional Chinese: https://jacbus1.github.io/dl-anything-you-want/
-- English: https://jacbus1.github.io/dl-anything-you-want/en/
+- English website: https://jacbus1.github.io/dl-anything-you-want/
 
 ## Source and author
 

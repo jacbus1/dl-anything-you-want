@@ -1,8 +1,8 @@
-# DL Anything You Want
+# Social Media Downloader & Converter
 
 **English** | [繁體中文](README.zh-TW.md)
 
-An English Facebook, Instagram, Threads, TikTok and YouTube downloader and converter. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
+**DL Anything You Want** is an English social media downloader and converter for Facebook (FB), Instagram (IG), Threads, YouTube and TikTok. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
 
 > **Local prototype.** Compose includes Cobalt; Threads extraction is experimental. GitHub Pages publishes only the interface, not the download API.
 
