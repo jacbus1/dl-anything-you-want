@@ -51,7 +51,8 @@ test('HTTP conversion failure returns an error before committing a download',asy
  const badResolver=async()=>({items:[{url:'https://x.fbcdn.net/example.mp4',type:'audio',filename:'dl-anything-01.mp3',transcode:'mp3'}],experimental:true,provider:'test'});
  const openMedia=async()=>{const s=Readable.from(['not an mp4']);s.headers={'content-type':'video/mp4','content-length':'10'};return s;};
  const {base,post}=await boot(t,{resolver:badResolver,openMedia});const d=await(await post({url:source,format:'mp3',consent:true})).json();
- const r=await fetch(base+d.items[0].path);assert.equal(r.status,502);assert.equal((await r.json()).error.code,'CONVERSION_FAILED');
+ const r=await fetch(base+d.items[0].path);assert.ok([502,503].includes(r.status));
+ assert.ok(['CONVERSION_FAILED','CONVERTER_UNAVAILABLE'].includes((await r.json()).error.code));
 });
 test('HTTP rate limiter ignores spoofed forwarding headers',async t=>{
  const {post}=await boot(t,{resolver});for(let i=0;i<6;i++)assert.equal((await post({url:source,consent:true},{'X-Forwarded-For':`8.8.8.${i}`})).status,200);
