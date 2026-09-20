@@ -6,9 +6,10 @@
 
 | Check | Result |
 | --- | --- |
-| Unit, HTTP and repository tests | 97 passed, 0 failed |
+| Unit, HTTP and repository tests | 108 passed, 0 failed |
 | Docker Compose | App running; digest-pinned Cobalt 11.7.1 healthy |
 | Instagram Reel | Resolved and downloaded through the browser and API |
+| Instagram profile-grid Reel link | MP4 and MP3 verified; see [test record](../instagram-profile-link-live-test-2026-09-20.md) |
 | Downloaded Instagram file | MP4, 5,177,355 bytes; H.264 720×1280 + AAC; 52.636780 seconds |
 | Threads supplied share link | Video and image downloaded locally; see [test record](../threads-live-test-2026-09-18.md) |
 | YouTube without cookies | MP4 and MP3 downloaded through the app; see [test record](../youtube-live-test-2026-09-18.md) |

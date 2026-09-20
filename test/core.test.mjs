@@ -15,6 +15,7 @@ for (const [input,platform,id] of [
  ['https://m.instagram.com/reels/ABC123','instagram','ABC123'],
  ['https://instagram.com/tv/ABC123/','instagram','ABC123'],
  ['https://instagram.com/share/reel/ABC123/','instagram','ABC123'],
+ ['https://www.instagram.com/githubsignals/reel/DdhFkgHgW4z/','instagram','DdhFkgHgW4z'],
  ['https://www.threads.net/@author/post/ABC123?x=y','threads','ABC123'],
  ['https://threads.com/@a.b/post/ABC123/','threads','ABC123'],
  ['https://threads.net/t/ABC123','threads','ABC123'],

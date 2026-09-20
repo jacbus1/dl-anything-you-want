@@ -1,5 +1,11 @@
 # Changelog
 
+## Instagram profile-grid download links 0.5.1 — 2026-09-20
+
+- Accept individual Instagram post and Reel links copied from profile grids in `/username/reel/post-id/` form.
+- Keep profile URLs and whole-account crawling out of scope.
+- Verify a public @githubsignals Reel as MP4 and MP3 through the local app.
+
 ## Profile Research Mode 0.5.0 — 2026-09-19
 
 - Add Instagram, Threads and TikTok profile research adapters.

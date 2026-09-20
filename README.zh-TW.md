@@ -19,6 +19,8 @@
 
 Profile Research Mode 會枚舉公開貼文 metadata 作研究，**不會**批量下載整個帳戶媒體。不提供私人貼文、Stories、followers 抓取、瀏覽器憑證上傳、CAPTCHA／DRM 繞過或批量 ZIP。
 
+請貼上個別公開貼文或 Reel 網址。從 Instagram profile 內複製的 `/username/reel/post-id/` 連結會自動轉成標準網址；貼上 profile 網址不會下載整個帳號。
+
 ## 本機開始
 
 最簡單的完整啟動方式：

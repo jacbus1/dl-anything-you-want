@@ -1,5 +1,11 @@
 # 更新記錄
 
+## Instagram profile 貼文下載連結 0.5.1 — 2026-09-20
+
+- 支援從 Instagram profile 內複製的 `/username/reel/post-id/` 個別貼文及 Reel 連結。
+- profile 網址及整個帳號抓取仍不在支援範圍。
+- 已透過本機程式把公開 @githubsignals Reel 驗證為 MP4 及 MP3。
+
 ## Profile Research Mode 0.5.0 — 2026-09-19
 
 - 加入 Instagram、Threads、TikTok profile research adapters。

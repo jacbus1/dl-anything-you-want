@@ -19,6 +19,8 @@
 
 Profile Research Mode enumerates public post metadata for research; it does **not** bulk-download profile media. No private posts, Stories, follower scraping, browser credential upload, CAPTCHA/DRM bypass or batch ZIP.
 
+Paste an individual public post or Reel URL. Instagram links copied from a profile grid, including `/username/reel/post-id/`, are normalized automatically; pasting a profile URL does not download the whole account.
+
 ## Quick start
 
 The shortest complete setup is:

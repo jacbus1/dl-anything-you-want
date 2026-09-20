@@ -112,10 +112,10 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
         res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers','Content-Type'); res.writeHead(204); res.end(); return;
       }
       if (req.method==='GET' && route==='/api/health') return json(res,200,{
-        status:'ok',version:'0.5.0',engine:config.cobaltURL?'configured':'not-configured',
+        status:'ok',version:'0.5.1',engine:config.cobaltURL?'configured':'not-configured',
         research:{instagram:'available',threads:config.apifyToken?'available':'needs-provider-token',tiktok:'available',summary:config.summaryURL&&config.summaryModel?'ai':'local-extractive'}
       });
-      const ip=req.socket.remoteAddress || 'unknown';
+      const ip=req.socket.remoteAddress || 'unknown'; // Never trust a user-supplied X-Forwarded-For.
       if (req.method==='POST' && route==='/api/profile-scan') {
         if(!origin)throw new AppError('ORIGIN_REQUIRED','Requests must come from the configured website.',403);
         if(!researchRate.allow(ip))throw new AppError('RATE_LIMITED','Too many research requests. Try again in one minute.',429);
