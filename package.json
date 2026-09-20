@@ -1,16 +1,16 @@
 {
   "name": "dl-anything-you-want",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
-  "description": "Social Media Downloader & Converter for Facebook (FB), Instagram (IG), Threads, YouTube and TikTok.",
+  "description": "Social media downloader, converter and profile research workbench for Instagram, Threads, TikTok, Facebook and YouTube.",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "start": "node --env-file-if-exists=.env server.mjs",
     "test": "node --test",
-    "check": "node --check server.mjs && node --check lib/core.mjs && node --check lib/network.mjs && node --check lib/providers.mjs && node --check web/app.js && node --check web/config.js"
+    "check": "node --check server.mjs && node --check lib/core.mjs && node --check lib/network.mjs && node --check lib/providers.mjs && node --check lib/profile-research.mjs && node --check web/app.js && node --check web/config.js"
   },
   "license": "MIT",
   "author": "JACKY H. (@jacbus1)",
@@ -40,6 +40,9 @@
     "youtube-downloader",
     "tiktok-downloader",
     "social-media-downloader",
-    "media-converter"
+    "media-converter",
+    "profile-research",
+    "github-discovery",
+    "social-media-research"
   ]
 }
