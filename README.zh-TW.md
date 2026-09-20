@@ -2,7 +2,7 @@
 
 [English](README.md) | **繁體中文**
 
-**DL Anything You Want** 是 Facebook（FB）、Instagram（IG）、Threads、YouTube、TikTok 的社交媒體下載及轉換器；網站預設使用英文。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
+**DL Anything You Want** 是 Facebook（FB）、Instagram（IG）、Threads、YouTube、TikTok 的社交媒體下載、轉換及 Profile Research 工作台；網站預設使用英文。作者：[JACKY H. (@jacbus1)](https://github.com/jacbus1)。
 
 > **本機原型。** Compose 已包含 Cobalt；Threads 解析仍屬實驗性。GitHub Pages 只發佈介面，不會運行下載 API。
 
@@ -14,9 +14,10 @@
 | Facebook／Instagram／TikTok／YouTube | 由內附的 Cobalt 解析公開媒體 | YouTube 無 cookies MP4／MP3 已驗證；其他相容性視平台改動而定 |
 | Threads 轉接器 | 匿名精確貼文解析及本機 FFmpeg 轉換 | 指定貼文已驗證 MP4、MP3、PNG |
 | 檔案串流 | 60 秒單次連結、格式及大小限制，不建立媒體庫 | 已用 `ffprobe` 檢查可播放格式 |
+| Profile Research Mode | Instagram／Threads／TikTok profile 掃描 → 選擇 posts → 摘要 → GitHub repo 驗證清單 | 只研究公開 metadata；會標示 provider／登入限制 |
 | 部署檔案 | Node 伺服器、可選 Docker Compose、CI 及 Pages workflow | Pages 只提供靜態介面 |
 
-不提供整個帳號抓取、私人貼文、Stories、登入、cookies 上傳、CAPTCHA／DRM 繞過或批量 ZIP。
+Profile Research Mode 會枚舉公開貼文 metadata 作研究，**不會**批量下載整個帳戶媒體。不提供私人貼文、Stories、followers 抓取、瀏覽器憑證上傳、CAPTCHA／DRM 繞過或批量 ZIP。
 
 ## 本機開始
 
@@ -65,6 +66,7 @@ Threads 不使用已設定的登入／session，但不代表所有貼文均可�
 | 部署及設定 | [部署](docs/zh-TW/deployment.md) | [Deployment](docs/en/deployment.md) |
 | 授權及外部服務 | [授權](docs/zh-TW/licensing.md) | [Licensing](docs/en/licensing.md) |
 | 研究與證據限制 | [研究](docs/zh-TW/research.md) | [Research](docs/en/research.md) |
+| Profile Research Mode | [Profile 研究](docs/zh-TW/profile-research.md) | [Profile research](docs/en/profile-research.md) |
 | 測試範圍及上線清單 | [驗證](docs/zh-TW/verification.md) | [Verification](docs/en/verification.md) |
 | 搜尋與 AI 可見度 | [GEO](docs/GEO.md) | [GEO](docs/GEO.md) |
 | 安全及回報 | [安全](SECURITY.zh-TW.md) | [Security](SECURITY.md) |

@@ -35,6 +35,15 @@ services:
       COBALT_URL: http://cobalt:9000/
       COBALT_API_KEY: ${COBALT_API_KEY:-}
       MAX_FILE_MB: ${MAX_FILE_MB:-100}
+      INSTAGRAM_SESSIONFILE: ${INSTAGRAM_SESSIONFILE:-}
+      INSTAGRAM_SESSION_USERNAME: ${INSTAGRAM_SESSION_USERNAME:-}
+      TIKTOK_COOKIES_FILE: ${TIKTOK_COOKIES_FILE:-}
+      APIFY_TOKEN: ${APIFY_TOKEN:-}
+      THREADS_APIFY_ACTOR: ${THREADS_APIFY_ACTOR:-logiover~threads-scraper}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      SUMMARY_API_URL: ${SUMMARY_API_URL:-}
+      SUMMARY_API_KEY: ${SUMMARY_API_KEY:-}
+      SUMMARY_MODEL: ${SUMMARY_MODEL:-}
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]

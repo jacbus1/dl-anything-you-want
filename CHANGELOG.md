@@ -1,5 +1,15 @@
 # Changelog
 
+## Profile Research Mode 0.5.0 — 2026-09-19
+
+- Add Instagram, Threads and TikTok profile research adapters.
+- Split research into profile scanning and selected-post analysis so users choose which posts to summarize.
+- Extract and verify GitHub repositories from selected post text; return descriptions, stars, topics, language, update time and CSV.
+- Add optional OpenAI-compatible summarization with a local extractive fallback.
+- Keep operator sessions/tokens server-side; the browser never accepts Instagram/TikTok cookies or passwords.
+- Pin Instaloader 4.15.3 and yt-dlp 2026.8.19 in the Docker image; Threads profile enumeration uses a configurable provider adapter.
+
+
 
 ## GitHub discovery 0.4.2 — 2026-09-18
 

@@ -2,7 +2,7 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-**DL Anything You Want** is an English social media downloader and converter for Facebook (FB), Instagram (IG), Threads, YouTube and TikTok. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
+**DL Anything You Want** is a social media downloader, converter and profile research workbench for Facebook (FB), Instagram (IG), Threads, YouTube and TikTok. Built by [JACKY H. (@jacbus1)](https://github.com/jacbus1).
 
 > **Local prototype.** Compose includes Cobalt; Threads extraction is experimental. GitHub Pages publishes only the interface, not the download API.
 
@@ -14,9 +14,10 @@
 | Facebook / Instagram / TikTok / YouTube | Public media extraction through the included Cobalt service | YouTube MP4 and MP3 verified without cookies; other compatibility depends on platform changes |
 | Threads adapter | Anonymous exact-post parsing with local FFmpeg conversion | Supplied post verified as MP4, MP3 and PNG |
 | File streaming | 60-second single-use tickets, MIME/byte limits, no application media archive | Playable formats checked with `ffprobe` |
+| Profile Research Mode | Instagram / Threads / TikTok profile scan → selectable posts → summaries → verified GitHub repository catalogue | Public metadata only; provider/login limits are reported |
 | Deployment | Node server, optional Docker Compose, CI and Pages workflow | Pages serves the static frontend only |
 
-No account crawling, private posts, Stories, login, cookies upload, CAPTCHA/DRM bypass or batch ZIP.
+Profile Research Mode enumerates public post metadata for research; it does **not** bulk-download profile media. No private posts, Stories, follower scraping, browser credential upload, CAPTCHA/DRM bypass or batch ZIP.
 
 ## Quick start
 
@@ -65,6 +66,7 @@ Static frontend (GitHub Pages or another host)
 | Deployment and configuration | [Deployment](docs/en/deployment.md) | [部署](docs/zh-TW/deployment.md) |
 | Licensing and external services | [Licensing](docs/en/licensing.md) | [授權](docs/zh-TW/licensing.md) |
 | Research and evidence limits | [Research](docs/en/research.md) | [研究](docs/zh-TW/research.md) |
+| Profile Research Mode | [Profile research](docs/en/profile-research.md) | [Profile 研究](docs/zh-TW/profile-research.md) |
 | Test scope and launch checklist | [Verification](docs/en/verification.md) | [驗證](docs/zh-TW/verification.md) |
 | Search and AI discovery | [GEO](docs/GEO.md) | [GEO](docs/GEO.md) |
 | Security and reporting | [Security](SECURITY.md) | [安全](SECURITY.zh-TW.md) |

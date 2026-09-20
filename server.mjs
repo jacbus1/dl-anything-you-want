@@ -12,6 +12,7 @@ import { spawn } from 'node:child_process';
 import { AppError, normalizeSource, TicketStore, RateLimiter, isMediaURL } from './lib/core.mjs';
 import { openURL, readBounded } from './lib/network.mjs';
 import { resolveMedia } from './lib/providers.mjs';
+import { scanProfile, analyzeSelectedPosts } from './lib/profile-research.mjs';
 
 export function readConfig(env=process.env) {
   const port=Number(env.PORT || 3000);
@@ -25,9 +26,22 @@ export function readConfig(env=process.env) {
       throw new Error('COBALT_URL must be an operator-controlled HTTP(S) origin with a trailing / and no credentials');
     if (['cobalt.tools','api.cobalt.tools'].includes(u.hostname)) throw new Error('Use your own Cobalt instance, not the official hosted API');
   }
+  let summaryURL='';
+  if(env.SUMMARY_API_URL){
+    const u=new URL(env.SUMMARY_API_URL);
+    if(u.username||u.password||u.hash||!(u.protocol==='https:'||(u.protocol==='http:'&&['localhost','127.0.0.1'].includes(u.hostname))))
+      throw new Error('SUMMARY_API_URL must use HTTPS, or local HTTP, without embedded credentials');
+    summaryURL=u.href;
+  }
   const maxFileBytes=Number(env.MAX_FILE_MB || 100)*1024*1024;
   if (!Number.isFinite(maxFileBytes) || maxFileBytes<1024 || maxFileBytes>500*1024*1024) throw new Error('Invalid MAX_FILE_MB (up to 500)');
-  return {port,host:env.HOST || '127.0.0.1', publicOrigin,origins,cobaltURL,cobaltKey:env.COBALT_API_KEY||'',maxFileBytes};
+  return {
+    port,host:env.HOST || '127.0.0.1',publicOrigin,origins,cobaltURL,cobaltKey:env.COBALT_API_KEY||'',maxFileBytes,
+    instagramSessionfile:env.INSTAGRAM_SESSIONFILE||'',instagramSessionUsername:env.INSTAGRAM_SESSION_USERNAME||'',
+    tiktokCookiesFile:env.TIKTOK_COOKIES_FILE||'',apifyToken:env.APIFY_TOKEN||'',
+    threadsActor:env.THREADS_APIFY_ACTOR||'logiover~threads-scraper',githubToken:env.GITHUB_TOKEN||'',
+    summaryURL,summaryKey:env.SUMMARY_API_KEY||'',summaryModel:env.SUMMARY_MODEL||''
+  };
 }
 
 const assets=new Map([
@@ -43,7 +57,6 @@ function byteLimit(maxFileBytes) {
   let total=0;
   return new Transform({transform(chunk,encoding,done) { total+=chunk.length; done(total>maxFileBytes?new AppError('FILE_TOO_LARGE','The file exceeds the size limit.',413):null,chunk); }});
 }
-
 async function runCommand(command,args,{timeoutMs=120000}={}) {
   const child=spawn(command,args,{stdio:['ignore','ignore','pipe']}); let stderr='';
   child.stderr.setEncoding('utf8'); child.stderr.on('data',x=>{if(stderr.length<4096)stderr+=x;});
@@ -53,14 +66,12 @@ async function runCommand(command,args,{timeoutMs=120000}={}) {
     child.once('close',code=>code===0?resolve():reject(new AppError('CONVERSION_FAILED',stderr.trim()||'Conversion failed.',502)));
   }); } finally { clearTimeout(timer); }
 }
-
 async function checkedFile(path,maxBytes) {
   const info=await stat(path).catch(()=>null);
   if (!info || info.size===0) throw new AppError('CONVERSION_FAILED','Conversion produced no output.',502);
   if (info.size>maxBytes) throw new AppError('FILE_TOO_LARGE','The file exceeds the size limit.',413);
   return info.size;
 }
-
 async function materialize(upstream,item,config) {
   const dir=await mkdtemp(join(tmpdir(),'dl-anything-')); const input=join(dir,'source');
   try {
@@ -76,45 +87,75 @@ async function materialize(upstream,item,config) {
   } catch(e) { await rm(dir,{recursive:true,force:true}); throw e; }
 }
 
-export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia=openURL, tickets=new TicketStore()}={}) {
-  const resolveRate=new RateLimiter(); const downloadRate=new RateLimiter({limit:24});
-  const globalRate=new RateLimiter({limit:30}); let activeResolves=0; let activeDownloads=0;
+async function jsonBody(req,max=4096){
+  if (!(req.headers['content-type']||'').startsWith('application/json')) throw new AppError('INVALID_BODY','Use JSON.',415);
+  try{return JSON.parse(await readBounded(req,max));}catch(e){if(e instanceof AppError)throw e;throw new AppError('INVALID_BODY','Invalid JSON.');}
+}
+function onlyKeys(body,keys){
+  if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).some(k=>!keys.includes(k)))throw new AppError('UNEXPECTED_FIELD','Unexpected request fields.',400);
+}
+
+export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia=openURL, tickets=new TicketStore(), profileScanner=scanProfile, profileAnalyzer=analyzeSelectedPosts}={}) {
+  const resolveRate=new RateLimiter(); const downloadRate=new RateLimiter({limit:24}); const researchRate=new RateLimiter({limit:6});
+  const globalRate=new RateLimiter({limit:30}); let activeResolves=0; let activeDownloads=0; let activeResearch=0;
   function json(res,status,data) { res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'}); res.end(JSON.stringify(data)); }
   return http.createServer(async (req,res) => {
-    res.setHeader('X-Content-Type-Options','nosniff');
-    res.setHeader('Referrer-Policy','no-referrer');
-    res.setHeader('Cache-Control','no-store');
-    res.setHeader('X-Frame-Options','DENY');
-    res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-    // No inline scripts / external dependencies. API origin must be explicitly configured.
+    res.setHeader('X-Content-Type-Options','nosniff'); res.setHeader('Referrer-Policy','no-referrer'); res.setHeader('Cache-Control','no-store');
+    res.setHeader('X-Frame-Options','DENY'); res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
     res.setHeader('Content-Security-Policy',`default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' ${[...config.origins].join(' ')}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`);
     const origin=req.headers.origin;
     if (origin && !config.origins.has(origin)) return json(res,403,{error:{code:'ORIGIN_DENIED',message:'This website is not allowed.'}});
     if (origin) { res.setHeader('Access-Control-Allow-Origin',origin); res.setHeader('Vary','Origin'); }
     try {
-      let route;
-      try { route=new URL(req.url,'http://localhost').pathname; }
-      catch { throw new AppError('INVALID_REQUEST', 'Invalid request path.'); }
-      if (req.method==='OPTIONS' && route==='/api/resolve') {
+      let route; try { route=new URL(req.url,'http://localhost').pathname; } catch { throw new AppError('INVALID_REQUEST','Invalid request path.'); }
+      if (req.method==='OPTIONS' && ['/api/resolve','/api/profile-scan','/api/profile-analyze'].includes(route)) {
         res.setHeader('Access-Control-Allow-Methods','POST, OPTIONS'); res.setHeader('Access-Control-Allow-Headers','Content-Type'); res.writeHead(204); res.end(); return;
       }
-      if (req.method==='GET' && route==='/api/health') return json(res,200,{status:'ok',version:'0.4.2',engine:config.cobaltURL?'configured':'not-configured'});
-      const ip=req.socket.remoteAddress || 'unknown'; // Never trust a user-supplied X-Forwarded-For.
+      if (req.method==='GET' && route==='/api/health') return json(res,200,{
+        status:'ok',version:'0.5.0',engine:config.cobaltURL?'configured':'not-configured',
+        research:{instagram:'available',threads:config.apifyToken?'available':'needs-provider-token',tiktok:'available',summary:config.summaryURL&&config.summaryModel?'ai':'local-extractive'}
+      });
+      const ip=req.socket.remoteAddress || 'unknown';
+      if (req.method==='POST' && route==='/api/profile-scan') {
+        if(!origin)throw new AppError('ORIGIN_REQUIRED','Requests must come from the configured website.',403);
+        if(!researchRate.allow(ip))throw new AppError('RATE_LIMITED','Too many research requests. Try again in one minute.',429);
+        if(activeResearch>=1)throw new AppError('BUSY','A profile research job is already running.',503);
+        const body=await jsonBody(req,8192); onlyKeys(body,['url','platform','maxPosts']);
+        const maxPosts=body.maxPosts==null?200:Number(body.maxPosts);
+        if(!Number.isInteger(maxPosts))throw new AppError('INVALID_LIMIT','maxPosts must be an integer.');
+        activeResearch++;
+        try {
+          const result=await profileScanner(body.url,{
+            platform:body.platform||'',maxPosts,
+            instagramSessionfile:config.instagramSessionfile,instagramSessionUsername:config.instagramSessionUsername,
+            tiktokCookiesFile:config.tiktokCookiesFile,apifyToken:config.apifyToken,threadsActor:config.threadsActor
+          });
+          return json(res,200,result);
+        } finally { activeResearch--; }
+      }
+      if (req.method==='POST' && route==='/api/profile-analyze') {
+        if(!origin)throw new AppError('ORIGIN_REQUIRED','Requests must come from the configured website.',403);
+        if(!researchRate.allow(ip))throw new AppError('RATE_LIMITED','Too many research requests. Try again in one minute.',429);
+        if(activeResearch>=1)throw new AppError('BUSY','A profile research job is already running.',503);
+        const body=await jsonBody(req,1024*1024); onlyKeys(body,['platform','profile','posts']);
+        activeResearch++;
+        try {
+          const result=await profileAnalyzer(body,{
+            githubToken:config.githubToken,summaryURL:config.summaryURL,summaryKey:config.summaryKey,summaryModel:config.summaryModel
+          });
+          return json(res,200,result);
+        } finally { activeResearch--; }
+      }
       if (req.method==='POST' && route==='/api/resolve') {
         if (!origin) throw new AppError('ORIGIN_REQUIRED','Requests must come from the configured website.',403);
-        if (!(req.headers['content-type']||'').startsWith('application/json')) throw new AppError('INVALID_BODY','Use JSON.',415);
         if (!resolveRate.allow(ip) || !globalRate.allow('all')) throw new AppError('RATE_LIMITED','Too many requests. Try again in one minute.',429);
         if (activeResolves>=2) throw new AppError('BUSY','The service is busy. Try again shortly.',503);
-        let body;
-        try { body=JSON.parse(await readBounded(req,4096)); } catch(e) { if (e instanceof AppError) throw e; throw new AppError('INVALID_BODY','Invalid JSON.'); }
-        if (!body || body.consent!==true) throw new AppError('CONSENT_REQUIRED','Confirm that you may download this content.');
-        if (Object.keys(body).some(k => !['url','consent','platform','format'].includes(k))) throw new AppError('UNEXPECTED_FIELD','Cookies, accounts, passwords and extra fields are not accepted.');
+        const body=await jsonBody(req,4096); onlyKeys(body,['url','consent','platform','format']);
+        if (body.consent!==true) throw new AppError('CONSENT_REQUIRED','Confirm that you may download this content.');
         const source=normalizeSource(body.url);
         const platform=body.platform || source.platform; const format=body.format || 'mp4';
-        if (!['facebook','instagram','threads','tiktok','youtube'].includes(platform) || platform!==source.platform)
-          throw new AppError('PLATFORM_MISMATCH','The selected platform does not match the URL.');
+        if (!['facebook','instagram','threads','tiktok','youtube'].includes(platform) || platform!==source.platform) throw new AppError('PLATFORM_MISMATCH','The selected platform does not match the URL.');
         if (!['mp4','mp3','png'].includes(format)) throw new AppError('INVALID_FORMAT','Choose MP4, MP3 or PNG.');
-        // Body reads yield: recheck immediately before acquiring a resolver slot.
         if (activeResolves>=2) throw new AppError('BUSY','The service is busy. Try again shortly.',503);
         activeResolves++;
         try {
@@ -135,10 +176,7 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
           let mime=(upstream.headers['content-type']||'').split(';')[0].trim();
           const cobaltTunnel=Boolean(config.cobaltURL && new URL(item.url).origin===new URL(config.cobaltURL).origin && new URL(item.url).pathname==='/tunnel');
           if ((!mime || mime==='application/octet-stream') && cobaltTunnel) mime=item.transcode==='png'?'image/jpeg':item.transcode==='mp3'?'video/mp4':item.type==='audio'?'audio/mpeg':item.type==='photo'?'image/jpeg':'video/mp4';
-          const allowed=item.transcode==='png'?['image/jpeg','image/png','image/webp']:
-            item.transcode==='mp3'?['video/mp4']:
-            item.type==='photo'?['image/jpeg','image/png','image/webp']:
-            item.type==='audio'?['audio/mpeg','audio/mp3']:['video/mp4'];
+          const allowed=item.transcode==='png'?['image/jpeg','image/png','image/webp']:item.transcode==='mp3'?['video/mp4']:item.type==='photo'?['image/jpeg','image/png','image/webp']:item.type==='audio'?['audio/mpeg','audio/mp3']:['video/mp4'];
           if (!allowed.includes(mime)) { upstream.destroy(); throw new AppError('INVALID_MEDIA','The source returned an unexpected media format.',502); }
           const length=Number(upstream.headers['content-length']);
           if (length===0) { upstream.destroy(); throw new AppError('INVALID_MEDIA','The source returned an empty file.',502); }
@@ -149,8 +187,7 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
         } finally { activeDownloads--; }
       }
       if (req.method==='GET' && assets.has(route)) {
-        const [filename,mime]=assets.get(route);
-        const data=await readFile(new URL(`./web/${filename}`,import.meta.url));
+        const [filename,mime]=assets.get(route); const data=await readFile(new URL(`./web/${filename}`,import.meta.url));
         res.writeHead(200,{'Content-Type':mime}); res.end(data); return;
       }
       throw new AppError('NOT_FOUND','Page not found.',404);
@@ -158,7 +195,7 @@ export function createApp(config=readConfig(), {resolver=resolveMedia, openMedia
       if (res.headersSent || res.destroyed) { res.destroy(); return; }
       if (e.status===429) res.setHeader('Retry-After','60');
       const expected=e instanceof AppError;
-      json(res,expected?e.status:502,{error:{code:expected?e.code:'UPSTREAM_FAILURE',message:expected?e.message:'The source connection failed. No file was received; try again later.'}});
+      json(res,expected?e.status:502,{error:{code:expected?e.code:'UPSTREAM_FAILURE',message:expected?e.message:'The source connection failed. Try again later.'}});
     }
   });
 }

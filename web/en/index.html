@@ -24,7 +24,7 @@
 <main class="shell">
   <section class="hero">
     <h1>Facebook / Instagram / Threads<br><em>TikTok / YouTube Downloader</em></h1>
-    <p class="intro">MP4 video · MP3 audio · PNG images</p>
+    <p class="intro">MP4 video · MP3 audio · PNG images · Profile Research</p>
   </section>
   <section class="workbench" aria-labelledby="download-title">
     <div class="bench-header"><h2 id="download-title">Video URL</h2><span id="connection" class="connection">Checking service</span></div>
@@ -40,6 +40,45 @@
     <p id="message" role="status" aria-live="polite" class="message">Links expire after about one minute.</p>
     <section id="results" class="results" hidden aria-labelledby="results-heading"><div class="result-heading"><h3 id="results-heading">Downloads</h3><span id="result-count"></span></div><p id="result-note"></p><div id="file-list"></div></section>
     <div class="bench-footer"><span>Download only public content you own or may use</span></div>
+  </section>
+
+  <section class="research-section" aria-labelledby="research-title">
+    <div class="research-heading">
+      <div><p class="micro">PROFILE RESEARCH MODE</p><h2 id="research-title">Scan profile → choose posts → summarize</h2></div>
+      <span class="research-badge">Instagram · Threads · TikTok</span>
+    </div>
+    <p class="research-intro">Enumerate public post metadata, select only the posts you want to study, then summarize them and extract verified GitHub repositories with purpose descriptions.</p>
+    <form id="research-form" class="research-form">
+      <fieldset><legend>Platform</legend><div class="choice-row research-platforms">
+        <label><input type="radio" name="research-platform" value="instagram" checked><span>Instagram</span></label>
+        <label><input type="radio" name="research-platform" value="threads"><span>Threads</span></label>
+        <label><input type="radio" name="research-platform" value="tiktok"><span>TikTok</span></label>
+      </div></fieldset>
+      <div class="research-query">
+        <label><span>Profile URL or @username</span><input id="research-url" type="text" placeholder="https://www.instagram.com/gittrend.io/" required autocomplete="off" spellcheck="false"></label>
+        <label class="research-limit"><span>Posts</span><select id="research-limit"><option>50</option><option selected>200</option><option>500</option><option>1000</option></select></label>
+        <button id="research-scan" type="submit" class="primary">Scan profile →</button>
+      </div>
+    </form>
+    <p id="research-message" class="message" role="status" aria-live="polite">Public metadata only. No bulk profile media download.</p>
+
+    <section id="research-posts" class="research-results" hidden>
+      <div class="research-toolbar">
+        <div><strong id="research-profile-name">Profile</strong><small id="research-coverage"></small></div>
+        <div class="research-actions"><button type="button" id="select-all" class="secondary">Select all</button><button type="button" id="select-github" class="secondary">GitHub only</button><button type="button" id="clear-selection" class="secondary">Clear</button></div>
+      </div>
+      <div id="research-post-list" class="post-list"></div>
+      <div class="research-analyze-bar"><span id="selected-count">0 selected</span><button id="analyze-selected" type="button" class="primary" disabled>Analyze selected →</button></div>
+    </section>
+
+    <section id="research-analysis" class="research-results analysis-panel" hidden>
+      <div class="analysis-header"><div><p class="micro">SELECTED-POST ANALYSIS</p><h3>Summary</h3></div><span id="summary-provider" class="research-badge"></span></div>
+      <p id="overall-summary" class="overall-summary"></p>
+      <div id="theme-list" class="theme-list"></div>
+      <div id="post-summaries" class="summary-list"></div>
+      <div class="repo-heading"><div><p class="micro">GITHUB CATALOGUE</p><h3>Repositories found in selected posts</h3></div><button id="download-repo-csv" type="button" class="secondary" hidden>Download CSV</button></div>
+      <div id="repo-list" class="repo-list"></div>
+    </section>
   </section>
 </main>
 <footer class="shell"><span class="footer-brand">DL Anything You Want</span><p>By <a href="https://github.com/jacbus1" rel="author">JACKY H. (@jacbus1)</a></p></footer>

@@ -1,5 +1,15 @@
 # 更新記錄
 
+## Profile Research Mode 0.5.0 — 2026-09-19
+
+- 加入 Instagram、Threads、TikTok profile research adapters。
+- 拆成 profile 掃描與「選定 posts 後分析」，由使用者決定哪些貼文才進行摘要。
+- 從選定貼文抽取並驗證 GitHub repositories，回傳用途描述、stars、topics、language、更新時間及 CSV。
+- 支援可選 OpenAI-compatible 摘要 endpoint；未設定時使用本機 extractive summary。
+- Operator session／token 只留在 server；瀏覽器不接受 Instagram／TikTok cookies 或密碼。
+- Docker 固定 Instaloader 4.15.3 與 yt-dlp 2026.8.19；Threads profile 枚舉採可替換 provider adapter。
+
+
 
 ## GitHub 搜尋資訊 0.4.2 — 2026-09-18
 
