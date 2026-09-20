@@ -1,34 +1,118 @@
-# Instagram Profile Research Mode
+# Profile Research Mode
 
-Profile Research Mode 與媒體下載分開。它會枚舉公開 Instagram 貼文、讀取 caption／profile metadata、抽取 GitHub repository 候選，再用 GitHub 驗證及去重，輸出 repo 連結、用途描述與 metadata。
+Profile Research Mode 與媒體下載分開，支援 **Instagram、Threads、TikTok**。流程分兩階段：
+
+1. **Scan profile**：枚舉公開貼文 metadata 與 caption／文字。
+2. **Analyze selected**：由使用者勾選真正想研究的 posts，再做摘要及 GitHub repository 抽取。
+
+GitHub 候選會盡量向 GitHub 驗證，輸出 repo link、用途描述、stars、language、topics、更新時間及來源 post；亦提供 CSV。
 
 ## 使用
 
-Docker Compose 已包含 Python 及 Instaloader 4.15.3：
+Docker Compose 已包含 Python、Instaloader 4.15.3 及 yt-dlp 2026.8.19：
 
 ```sh
 docker compose up --build
 ```
 
-開啟本機網站使用 **Profile Research Mode**，或向 `/api/profile-research` POST：
+開啟本機網站使用 **Profile Research Mode**。
+
+### API：先掃 profile
+
+POST `/api/profile-scan`：
 
 ```json
-{"url":"https://www.instagram.com/gittrend.io/","maxPosts":1000}
+{
+  "platform": "instagram",
+  "url": "https://www.instagram.com/gittrend.io/",
+  "maxPosts": 200
+}
 ```
 
-回應包括 profile 摘要、掃描覆蓋率、repository 清單及 CSV 字串。
+`platform` 可選：`instagram`、`threads`、`tiktok`。
 
-## 完整掃描與登入限制
+回應會有 profile metadata 及可勾選的 `posts`；每帖包含 id、URL、日期、文字，以及該帖偵測到的 GitHub candidates。
 
-Instagram 匿名存取可能被限流或要求登入。網站介面不接收 Instagram 密碼或 cookies。若 Instagram 要求 session，請在此程式之外建立 Instaloader session，唯讀 mount 後設定：
+### API：只分析選定 posts
+
+向 `/api/profile-analyze` 傳入使用者已勾選的 posts：
+
+```json
+{
+  "platform": "instagram",
+  "profile": {"username": "gittrend.io"},
+  "posts": [
+    {
+      "id": "ABC123",
+      "url": "https://www.instagram.com/p/ABC123/",
+      "text": "..."
+    }
+  ]
+}
+```
+
+回應包括：
+
+- selected posts 的整體摘要及 themes；
+- 每帖獨立 summary；
+- 經驗證的 GitHub repository 清單；
+- repo 用途描述及 metadata；
+- CSV 匯出。
+
+## 各平台 collector
+
+| 平台 | Profile 枚舉 | 備註 |
+| --- | --- | --- |
+| Instagram | Instaloader 4.15.3 | 公開 profile 可匿名嘗試；部分帳戶需要 operator-owned Instaloader session |
+| TikTok | yt-dlp 2026.8.19 | 使用公開 user extractor；部分 profile 可能需要 operator-owned cookies，或 TikTok 不提供 secondary user ID 而失敗 |
+| Threads | Provider adapter | v0.5.0 以可設定 Apify actor 枚舉 profile；單一 Threads post 下載仍然走本機原有流程 |
+
+### Instagram session
+
+網站不接收 Instagram 密碼或 cookies。若需要 session，請在程式之外建立，再以 read-only mount 提供：
 
 ```dotenv
 INSTAGRAM_SESSIONFILE=/sessions/session-youruser
 INSTAGRAM_SESSION_USERNAME=youruser
 ```
 
-大量 repo enrichment 建議在伺服器環境設定 `GITHUB_TOKEN`，只用於 GitHub API metadata 查詢，不會回傳給瀏覽器。
+### TikTok cookies
+
+需要時可 read-only mount operator-owned Netscape 格式 cookies：
+
+```dotenv
+TIKTOK_COOKIES_FILE=/sessions/tiktok-cookies.txt
+```
+
+### Threads provider
+
+Threads profile 枚舉設定：
+
+```dotenv
+APIFY_TOKEN=...
+THREADS_APIFY_ACTOR=logiover~threads-scraper
+```
+
+Provider adapter 已隔離，日後換成自架 browser collector 時不需要改 scan／analyze API。
+
+## GitHub enrichment
+
+大型 profile 建議在 server 環境設定 `GITHUB_TOKEN`。只會用於 GitHub repo metadata lookup，不會回傳到瀏覽器。
+
+## 摘要
+
+如果沒有外部模型，系統仍會產生本機 extractive summary 及 recurring-keyword themes。
+
+如要較完整 AI 摘要，可設定 OpenAI-compatible chat-completions endpoint：
+
+```dotenv
+SUMMARY_API_URL=https://your-compatible-endpoint.example/v1/chat/completions
+SUMMARY_API_KEY=...
+SUMMARY_MODEL=...
+```
+
+只有**使用者已選定 posts 的文字**會送到該 summarization endpoint。
 
 ## 邊界
 
-只研究公開 profile／post metadata，不會批量下載帳戶媒體、Stories、私人貼文、followers 或私人帳戶資料。Instagram 如中斷枚舉、限流、刪帖或改動介面，結果仍可能不完整；回應會明確提供 `posts_scanned`、`media_count` 及 `truncated`。
+只研究公開 profile／post metadata；不會批量下載整個帳戶媒體、不抓私人貼文、Stories、followers、不上傳 browser credentials，亦不繞過 CAPTCHA／DRM。平台限流、要求登入、刪帖、改版或 provider unavailable 時，結果可能不完整；scan response 會標明掃描數量、provider 及是否 partial。
