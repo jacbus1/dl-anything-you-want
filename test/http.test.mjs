@@ -98,3 +98,25 @@ test('HTTP caps concurrent resolvers even when three bodies arrive after admissi
  release();
  assert.deepEqual((await Promise.all(responses)).sort(),[200,200,503]);
 });
+
+
+test('HTTP Profile Research Mode scans first and analyzes only selected posts',async t=>{
+ const scanned={profile:{platform:'instagram',username:'gittrend.io',url:'https://www.instagram.com/gittrend.io/'},scan:{posts_scanned:2,truncated:false,provider:'fixture'},posts:[
+  {id:'A',url:'https://www.instagram.com/p/AAA/',date_utc:'',text:'Tencent/teamai-cli',github_candidates:['Tencent/teamai-cli']},
+  {id:'B',url:'https://www.instagram.com/p/BBB/',date_utc:'',text:'Other post',github_candidates:[]}
+ ]};
+ let analyzedBody=null;
+ const profileScanner=async(input,options)=>{assert.equal(input,'https://www.instagram.com/gittrend.io/');assert.equal(options.platform,'instagram');return scanned;};
+ const profileAnalyzer=async body=>{analyzedBody=body;return {platform:'instagram',selected_count:body.posts.length,summary_provider:'local-extractive',overall_summary:'one post',themes:['ai'],posts:[],repos:[],csv:''};};
+ const {base}=await boot(t,{profileScanner,profileAnalyzer});
+ const scan=await fetch(base+'/api/profile-scan',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({platform:'instagram',url:'https://www.instagram.com/gittrend.io/',maxPosts:200})});
+ assert.equal(scan.status,200);const scanData=await scan.json();assert.equal(scanData.posts.length,2);
+ const analyze=await fetch(base+'/api/profile-analyze',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({platform:'instagram',profile:scanData.profile,posts:[scanData.posts[0]]})});
+ assert.equal(analyze.status,200);const data=await analyze.json();assert.equal(data.selected_count,1);assert.equal(analyzedBody.posts[0].id,'A');
+});
+
+test('HTTP Profile Research Mode rejects unexpected credential fields',async t=>{
+ const {base}=await boot(t,{profileScanner:async()=>({}),profileAnalyzer:async()=>({})});
+ const r=await fetch(base+'/api/profile-scan',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({platform:'instagram',url:'@x',password:'secret'})});
+ assert.equal(r.status,400);assert.equal((await r.json()).error.code,'UNEXPECTED_FIELD');
+});
