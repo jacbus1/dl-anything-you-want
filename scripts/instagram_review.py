@@ -55,7 +55,7 @@ def event_input() -> tuple[str, str]:
                 ["git", "diff", "--name-only", "HEAD^", "HEAD"],
                 cwd=ROOT, capture_output=True, text=True, check=True)
             paths = [p for p in changed.stdout.splitlines()
-                     if re.fullmatch(r"review-requests/[A-Za-z0-9_-]+\\.json", p)]
+                     if re.fullmatch(r"review-requests/[A-Za-z0-9_-]+\.json", p)]
         if len(paths) != 1:
             raise ValueError(f"Expected one review-requests/*.json file; found {len(paths)}")
         req = json.loads((ROOT / paths[0]).read_text())
