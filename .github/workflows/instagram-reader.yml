@@ -39,7 +39,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install tools (yt-dlp, FFmpeg, Pillow, Faster Whisper)
-        run: python -m pip install --upgrade yt-dlp imageio-ffmpeg Pillow faster-whisper 'huggingface-hub<1.0'
+        run: python -m pip install --upgrade yt-dlp imageio-ffmpeg Pillow faster-whisper 'av<19'
 
       - name: Validate URL handling
         run: |
