@@ -49,6 +49,14 @@ def event_input() -> tuple[str, str]:
         paths = [p for p in added + modified
                  if re.fullmatch(r"review-requests/[A-Za-z0-9_-]+\.json", p)]
         if len(paths) != 1:
+            # GitHub's push payload can omit changed-path arrays for some
+            # GitHub App commits. Checkout fetch-depth=2 gives a reliable diff.
+            changed = subprocess.run(
+                ["git", "diff", "--name-only", "HEAD^", "HEAD"],
+                cwd=ROOT, capture_output=True, text=True, check=True)
+            paths = [p for p in changed.stdout.splitlines()
+                     if re.fullmatch(r"review-requests/[A-Za-z0-9_-]+\\.json", p)]
+        if len(paths) != 1:
             raise ValueError(f"Expected one review-requests/*.json file; found {len(paths)}")
         req = json.loads((ROOT / paths[0]).read_text())
         return str(req.get("url", "")), Path(paths[0]).stem
