@@ -1,0 +1,70 @@
+name: Read Instagram Reel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'review-requests/*.json'
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Public Instagram Reel/post URL'
+        required: true
+        type: string
+      request_id:
+        description: 'Optional tracking label'
+        required: false
+        default: 'manual'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ig-reader-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  capture-and-transcribe:
+    name: Download, extract frames, transcribe
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install tools (yt-dlp, FFmpeg, Pillow, Faster Whisper)
+        run: python -m pip install --upgrade yt-dlp imageio-ffmpeg Pillow faster-whisper
+
+      - name: Validate URL handling
+        run: |
+          python - <<'PY'
+          from scripts.instagram_review import normalize_instagram_url
+          assert normalize_instagram_url("https://www.instagram.com/reel/DeHYXpuKahQ/?stkn=hello")[1] == "DeHYXpuKahQ"
+          for url in ("https://evil.example/reel/DeHYXpuKahQ/",
+                      "https://instagram.com.evil.com/reel/DeHYXpuKahQ/",
+                      "file:///etc/passwd"):
+              try:
+                  normalize_instagram_url(url)
+              except ValueError:
+                  pass
+              else:
+                  raise AssertionError("Unsafe URL accepted")
+          print("URL validation OK")
+          PY
+
+      - name: Download video and generate analysis bundle
+        run: python scripts/instagram_review.py --out review-output
+
+      - name: Publish inspectable output (or error details)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: instagram-reader-${{ github.run_id }}
+          path: review-output/
+          if-no-files-found: warn
+          retention-days: 2
+          compression-level: 5
